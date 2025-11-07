@@ -15,42 +15,55 @@ struct SurahsView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
+                // Dark background
+                AppColors.darkBackground
+                    .ignoresSafeArea()
+
                 if surahs.isEmpty {
-                    VStack(spacing: 16) {
-                        Image(systemName: "book.closed")
-                            .font(.system(size: 60))
-                            .foregroundColor(.secondary)
+                    VStack(spacing: 24) {
+                        Image(systemName: "book.closed.fill")
+                            .font(.system(size: 70))
+                            .foregroundColor(AppColors.neonCyan)
+                            .shadow(color: AppColors.neonCyan.opacity(0.5), radius: 10)
 
                         Text("No Surahs loaded")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
+                            .font(.title2.bold())
+                            .foregroundColor(AppColors.primaryText)
+
+                        Text("Load sample data to get started")
+                            .font(.subheadline)
+                            .foregroundColor(AppColors.secondaryText)
 
                         Button(action: loadSampleData) {
                             Label("Load Sample Surahs", systemImage: "arrow.down.circle.fill")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
                         }
+                        .vibrantButton(color: AppColors.neonCyan, fullWidth: false)
                     }
                     .padding()
                 } else {
-                    List {
-                        ForEach(surahs.sorted(by: { $0.surahNumber < $1.surahNumber })) { surah in
-                            NavigationLink(destination: ReadingModeView(surah: surah)) {
-                                SurahRowView(surah: surah)
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            ForEach(Array(surahs.sorted(by: { $0.surahNumber < $1.surahNumber }).enumerated()), id: \.element.id) { index, surah in
+                                NavigationLink(destination: ReadingModeView(surah: surah)) {
+                                    SurahRowView(surah: surah, index: index)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
+                        .padding()
+                        .padding(.bottom, 20)
                     }
                 }
             }
             .navigationTitle("Surahs")
             .navigationBarTitleDisplayMode(.large)
+            .preferredColorScheme(.dark)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: loadSampleData) {
-                        Label("Reload", systemImage: "arrow.clockwise")
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(AppColors.neonCyan)
                     }
                 }
             }
@@ -81,48 +94,58 @@ struct SurahsView: View {
 
 struct SurahRowView: View {
     let surah: Surah
+    let index: Int
+
+    // Cycle through vibrant colors
+    var accentColor: Color {
+        let colors = [AppColors.neonGreen, AppColors.neonCyan, AppColors.neonPink, AppColors.neonPurple, AppColors.neonOrange]
+        return colors[index % colors.count]
+    }
 
     var body: some View {
         HStack(spacing: 16) {
-            // Surah number in circle
-            ZStack {
-                Circle()
-                    .stroke(Color.blue, lineWidth: 2)
-                    .frame(width: 50, height: 50)
-
-                Text("\(surah.surahNumber)")
-                    .font(.headline)
-                    .foregroundColor(.blue)
-            }
+            // Neon ring with surah number
+            NeonRing(number: surah.surahNumber, color: accentColor, size: 56)
 
             // Surah info
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(surah.name)
-                    .font(.headline)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(AppColors.primaryText)
 
                 Text(surah.arabicName)
-                    .font(.title3)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(accentColor)
 
-                HStack {
-                    Text(surah.revelationType)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                HStack(spacing: 8) {
+                    HStack(spacing: 4) {
+                        Image(systemName: surah.revelationType == "Meccan" ? "moon.fill" : "building.2.fill")
+                            .font(.system(size: 10))
+                        Text(surah.revelationType)
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(AppColors.secondaryText)
 
                     Text("•")
-                        .foregroundColor(.secondary)
-
-                    Text("\(surah.numberOfVerses) verses")
+                        .foregroundColor(AppColors.tertiaryText)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.text.fill")
+                            .font(.system(size: 10))
+                        Text("\(surah.numberOfVerses) verses")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(AppColors.secondaryText)
                 }
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
-                .font(.caption)
+                .foregroundColor(accentColor)
+                .font(.system(size: 14, weight: .bold))
         }
-        .padding(.vertical, 8)
+        .glassCard(cornerRadius: 20, padding: 16)
     }
 }

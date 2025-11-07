@@ -16,54 +16,160 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationView {
-            Form {
-                Section("Data Export") {
-                    Button(action: exportNotesToCSV) {
-                        Label("Export Notes to CSV", systemImage: "square.and.arrow.up")
-                    }
+            ZStack {
+                // Dark background
+                AppColors.darkBackground
+                    .ignoresSafeArea()
 
-                    Text("Export all your notes and categories to a CSV file")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Data Export Section
+                        VStack(spacing: 16) {
+                            HStack {
+                                Image(systemName: "square.and.arrow.up.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(AppColors.neonGreen)
 
-                Section("Statistics") {
-                    HStack {
-                        Text("Total Notes")
-                        Spacer()
-                        Text("\(notes.count)")
-                            .foregroundColor(.secondary)
-                    }
-                }
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Data Export")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundColor(AppColors.primaryText)
+                                    Text("Export all your notes and categories")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(AppColors.secondaryText)
+                                }
 
-                Section("About") {
-                    HStack {
-                        Text("App Name")
-                        Spacer()
-                        Text("Quran English")
-                            .foregroundColor(.secondary)
-                    }
+                                Spacer()
+                            }
 
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("1.0")
-                            .foregroundColor(.secondary)
-                    }
-                }
+                            Button(action: exportNotesToCSV) {
+                                HStack {
+                                    Image(systemName: "doc.text.fill")
+                                    Text("Export Notes to CSV")
+                                        .font(.system(size: 16, weight: .semibold))
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .vibrantButton(color: AppColors.neonGreen, fullWidth: true)
+                        }
+                        .glassCard(cornerRadius: 20, padding: 20)
 
-                Section("Support") {
-                    Link(destination: URL(string: "https://github.com")!) {
-                        Label("GitHub Repository", systemImage: "link")
-                    }
+                        // Statistics Section
+                        VStack(spacing: 16) {
+                            HStack {
+                                Image(systemName: "chart.bar.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(AppColors.neonCyan)
 
-                    Link(destination: URL(string: "mailto:support@example.com")!) {
-                        Label("Contact Support", systemImage: "envelope")
+                                Text("Statistics")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(AppColors.primaryText)
+
+                                Spacer()
+                            }
+
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Total Notes")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundColor(AppColors.secondaryText)
+                                }
+
+                                Spacer()
+
+                                Text("\(notes.count)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundColor(AppColors.neonCyan)
+                                    .shadow(color: AppColors.neonCyan.opacity(0.5), radius: 4)
+                            }
+                        }
+                        .glassCard(cornerRadius: 20, padding: 20)
+
+                        // About Section
+                        VStack(spacing: 16) {
+                            HStack {
+                                Image(systemName: "info.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(AppColors.neonPurple)
+
+                                Text("About")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(AppColors.primaryText)
+
+                                Spacer()
+                            }
+
+                            VStack(spacing: 12) {
+                                SettingRow(icon: "app.fill", title: "App Name", value: "Quran English", color: AppColors.neonPurple)
+                                Divider().background(Color.white.opacity(0.1))
+                                SettingRow(icon: "number.circle.fill", title: "Version", value: "1.0", color: AppColors.neonPurple)
+                            }
+                        }
+                        .glassCard(cornerRadius: 20, padding: 20)
+
+                        // Support Section
+                        VStack(spacing: 16) {
+                            HStack {
+                                Image(systemName: "questionmark.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(AppColors.neonPink)
+
+                                Text("Support")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(AppColors.primaryText)
+
+                                Spacer()
+                            }
+
+                            VStack(spacing: 12) {
+                                Link(destination: URL(string: "https://github.com")!) {
+                                    HStack {
+                                        Image(systemName: "link.circle.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(AppColors.neonPink)
+
+                                        Text("GitHub Repository")
+                                            .font(.system(size: 15, weight: .medium))
+                                            .foregroundColor(AppColors.primaryText)
+
+                                        Spacer()
+
+                                        Image(systemName: "arrow.up.right")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(AppColors.secondaryText)
+                                    }
+                                }
+
+                                Divider().background(Color.white.opacity(0.1))
+
+                                Link(destination: URL(string: "mailto:support@example.com")!) {
+                                    HStack {
+                                        Image(systemName: "envelope.circle.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(AppColors.neonPink)
+
+                                        Text("Contact Support")
+                                            .font(.system(size: 15, weight: .medium))
+                                            .foregroundColor(AppColors.primaryText)
+
+                                        Spacer()
+
+                                        Image(systemName: "arrow.up.right")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(AppColors.secondaryText)
+                                    }
+                                }
+                            }
+                        }
+                        .glassCard(cornerRadius: 20, padding: 20)
                     }
+                    .padding()
+                    .padding(.bottom, 20)
                 }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
+            .preferredColorScheme(.dark)
             .alert("Export Successful", isPresented: $showExportSuccess) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -113,6 +219,32 @@ struct SettingsView: View {
             showExportSheet = true
         } catch {
             print("Error saving CSV: \(error)")
+        }
+    }
+}
+
+// MARK: - Setting Row
+struct SettingRow: View {
+    let icon: String
+    let title: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundColor(color)
+
+            Text(title)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(AppColors.secondaryText)
+
+            Spacer()
+
+            Text(value)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(AppColors.primaryText)
         }
     }
 }

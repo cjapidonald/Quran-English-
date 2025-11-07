@@ -46,18 +46,20 @@ class UserPreferences: ObservableObject {
     }
 
     init() {
-        self.arabicTextColor = Color(hex: UserDefaults.standard.string(forKey: "arabicTextColor") ?? "#000000")
-        self.englishTextColor = Color(hex: UserDefaults.standard.string(forKey: "englishTextColor") ?? "#333333")
-        self.backgroundColor = Color(hex: UserDefaults.standard.string(forKey: "backgroundColor") ?? "#FFFFFF")
+        // Dark theme defaults
+        self.arabicTextColor = Color(hex: UserDefaults.standard.string(forKey: "arabicTextColor") ?? "#FFFFFF")
+        self.englishTextColor = Color(hex: UserDefaults.standard.string(forKey: "englishTextColor") ?? "#99CCFF")
+        self.backgroundColor = Color(hex: UserDefaults.standard.string(forKey: "backgroundColor") ?? "#12121E")
         self.fontSize = CGFloat(UserDefaults.standard.double(forKey: "fontSize") != 0 ? UserDefaults.standard.double(forKey: "fontSize") : 18.0)
         self.showArabic = UserDefaults.standard.object(forKey: "showArabic") as? Bool ?? true
         self.showEnglish = UserDefaults.standard.object(forKey: "showEnglish") as? Bool ?? true
     }
 
     func reset() {
-        arabicTextColor = .black
-        englishTextColor = Color(hex: "#333333")
-        backgroundColor = .white
+        // Reset to dark theme defaults
+        arabicTextColor = .white
+        englishTextColor = Color(hex: "#99CCFF")
+        backgroundColor = Color(hex: "#12121E")
         fontSize = 18.0
         showArabic = true
         showEnglish = true

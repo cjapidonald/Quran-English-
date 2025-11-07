@@ -28,32 +28,93 @@ struct StudyView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                // Tab selector
-                Picker("", selection: $selectedTab) {
-                    Text("My Notes").tag(0)
-                    Text("Favorites").tag(1)
-                    Text("Categories").tag(2)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
+            ZStack {
+                // Dark background
+                AppColors.darkBackground
+                    .ignoresSafeArea()
 
-                // Content based on selected tab
-                Group {
-                    switch selectedTab {
-                    case 0:
-                        myNotesView
-                    case 1:
-                        favoritesView
-                    case 2:
-                        categoriesView
-                    default:
-                        myNotesView
+                VStack(spacing: 0) {
+                    // Custom tab selector with glass effect
+                    HStack(spacing: 0) {
+                        ForEach(0..<3) { index in
+                            Button(action: { withAnimation(.spring()) { selectedTab = index } }) {
+                                VStack(spacing: 4) {
+                                    Image(systemName: tabIcon(for: index))
+                                        .font(.system(size: 20, weight: .semibold))
+                                    Text(tabTitle(for: index))
+                                        .font(.system(size: 12, weight: .medium))
+                                }
+                                .foregroundColor(selectedTab == index ? tabColor(for: index) : AppColors.secondaryText)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    selectedTab == index ?
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(tabColor(for: index).opacity(0.15))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(tabColor(for: index).opacity(0.3), lineWidth: 1)
+                                        ) : nil
+                                )
+                            }
+                        }
+                    }
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColors.cardBackground)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                            )
+                    )
+                    .padding()
+
+                    // Content based on selected tab
+                    Group {
+                        switch selectedTab {
+                        case 0:
+                            myNotesView
+                        case 1:
+                            favoritesView
+                        case 2:
+                            categoriesView
+                        default:
+                            myNotesView
+                        }
                     }
                 }
             }
             .navigationTitle("Study")
             .navigationBarTitleDisplayMode(.large)
+            .preferredColorScheme(.dark)
+        }
+    }
+
+    private func tabIcon(for index: Int) -> String {
+        switch index {
+        case 0: return "note.text.badge.plus"
+        case 1: return "heart.fill"
+        case 2: return "folder.fill"
+        default: return "note.text"
+        }
+    }
+
+    private func tabTitle(for index: Int) -> String {
+        switch index {
+        case 0: return "Notes"
+        case 1: return "Favorites"
+        case 2: return "Categories"
+        default: return ""
+        }
+    }
+
+    private func tabColor(for index: Int) -> Color {
+        switch index {
+        case 0: return AppColors.neonCyan
+        case 1: return AppColors.neonPink
+        case 2: return AppColors.neonYellow
+        default: return AppColors.neonCyan
         }
     }
 
@@ -62,54 +123,43 @@ struct StudyView: View {
             // Category filter
             if !categories.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        Button(action: { selectedCategory = nil }) {
-                            Text("All")
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(selectedCategory == nil ? Color.blue : Color(uiColor: .secondarySystemBackground))
-                                .foregroundColor(selectedCategory == nil ? .white : .primary)
-                                .cornerRadius(20)
-                        }
+                    HStack(spacing: 12) {
+                        FilterChip(
+                            title: "All",
+                            isSelected: selectedCategory == nil,
+                            color: AppColors.neonGreen,
+                            action: { selectedCategory = nil }
+                        )
 
                         ForEach(categories) { category in
-                            Button(action: { selectedCategory = category }) {
-                                Text(category.name)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(selectedCategory?.id == category.id ? Color.blue : Color(uiColor: .secondarySystemBackground))
-                                    .foregroundColor(selectedCategory?.id == category.id ? .white : .primary)
-                                    .cornerRadius(20)
-                            }
+                            FilterChip(
+                                title: category.name,
+                                isSelected: selectedCategory?.id == category.id,
+                                color: Color(hex: category.colorHex),
+                                action: { selectedCategory = category }
+                            )
                         }
                     }
                     .padding(.horizontal)
                 }
-                .padding(.bottom, 8)
+                .padding(.bottom, 12)
             }
 
             if filteredNotes.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "note.text")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
-
-                    Text("No notes yet")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-
-                    Text("Long press on any verse while reading to add a note")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding()
+                EmptyStateView(
+                    icon: "note.text.badge.plus",
+                    title: "No notes yet",
+                    subtitle: "Long press on any verse while reading to add a note",
+                    color: AppColors.neonCyan
+                )
             } else {
-                List {
-                    ForEach(filteredNotes.sorted(by: { $0.updatedAt > $1.updatedAt })) { note in
-                        NoteRowView(note: note)
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(filteredNotes.sorted(by: { $0.updatedAt > $1.updatedAt })) { note in
+                            NoteRowView(note: note)
+                        }
                     }
-                    .onDelete(perform: deleteNotes)
+                    .padding()
                 }
             }
         }
@@ -118,27 +168,20 @@ struct StudyView: View {
     private var favoritesView: some View {
         VStack {
             if favorites.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "heart")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
-
-                    Text("No favorites yet")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-
-                    Text("Double tap on any verse while reading to add to favorites")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding()
+                EmptyStateView(
+                    icon: "heart.fill",
+                    title: "No favorites yet",
+                    subtitle: "Double tap on any verse while reading to add to favorites",
+                    color: AppColors.neonPink
+                )
             } else {
-                List {
-                    ForEach(favorites.sorted(by: { $0.addedAt > $1.addedAt })) { favorite in
-                        FavoriteRowView(favorite: favorite)
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(favorites.sorted(by: { $0.addedAt > $1.addedAt })) { favorite in
+                            FavoriteRowView(favorite: favorite)
+                        }
                     }
-                    .onDelete(perform: deleteFavorites)
+                    .padding()
                 }
             }
         }
@@ -147,35 +190,42 @@ struct StudyView: View {
     private var categoriesView: some View {
         VStack {
             if categories.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "folder")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
+                VStack(spacing: 24) {
+                    Image(systemName: "folder.fill.badge.plus")
+                        .font(.system(size: 70))
+                        .foregroundColor(AppColors.neonYellow)
+                        .shadow(color: AppColors.neonYellow.opacity(0.5), radius: 10)
 
                     Text("No categories yet")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
+                        .font(.title2.bold())
+                        .foregroundColor(AppColors.primaryText)
+
+                    Text("Create categories to organize your notes")
+                        .font(.subheadline)
+                        .foregroundColor(AppColors.secondaryText)
+                        .multilineTextAlignment(.center)
 
                     Button(action: { showNewCategoryAlert = true }) {
                         Label("Create Category", systemImage: "folder.badge.plus")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
                     }
+                    .vibrantButton(color: AppColors.neonYellow, fullWidth: false)
                 }
                 .padding()
             } else {
-                List {
-                    ForEach(categories) { category in
-                        CategoryRowView(category: category)
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(categories) { category in
+                            CategoryRowView(category: category)
+                        }
                     }
-                    .onDelete(perform: deleteCategories)
+                    .padding()
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: { showNewCategoryAlert = true }) {
-                            Image(systemName: "plus")
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(AppColors.neonYellow)
+                                .font(.system(size: 24))
                         }
                     }
                 }
@@ -199,98 +249,151 @@ struct StudyView: View {
         try? modelContext.save()
         newCategoryName = ""
     }
+}
 
-    private func deleteNotes(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(filteredNotes[index])
-        }
-        try? modelContext.save()
-    }
+// MARK: - Filter Chip
+struct FilterChip: View {
+    let title: String
+    let isSelected: Bool
+    let color: Color
+    let action: () -> Void
 
-    private func deleteFavorites(at offsets: IndexSet) {
-        let sortedFavorites = favorites.sorted(by: { $0.addedAt > $1.addedAt })
-        for index in offsets {
-            modelContext.delete(sortedFavorites[index])
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(isSelected ? .black : AppColors.primaryText)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(isSelected ? color : AppColors.cardBackground)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(isSelected ? color.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                        .shadow(color: isSelected ? color.opacity(0.3) : .clear, radius: 8, x: 0, y: 4)
+                )
         }
-        try? modelContext.save()
-    }
-
-    private func deleteCategories(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(categories[index])
-        }
-        try? modelContext.save()
     }
 }
 
+// MARK: - Empty State View
+struct EmptyStateView: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Image(systemName: icon)
+                .font(.system(size: 70))
+                .foregroundColor(color)
+                .shadow(color: color.opacity(0.5), radius: 10)
+
+            VStack(spacing: 8) {
+                Text(title)
+                    .font(.title2.bold())
+                    .foregroundColor(AppColors.primaryText)
+
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(AppColors.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+    }
+}
+
+// MARK: - Note Row View
 struct NoteRowView: View {
     let note: QuranNote
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Surah \(note.surahNumber):\(note.verseNumber)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack(spacing: 4) {
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(AppColors.neonCyan)
+                    Text("Surah \(note.surahNumber):\(note.verseNumber)")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(AppColors.neonCyan)
+                }
 
                 if let category = note.category {
                     Text(category.name)
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.blue.opacity(0.2))
-                        .foregroundColor(.blue)
-                        .cornerRadius(8)
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(Color(hex: category.colorHex))
+                        )
                 }
 
                 Spacer()
 
                 Text(note.updatedAt, style: .date)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(AppColors.tertiaryText)
             }
 
             Text(note.arabicText)
-                .font(.system(size: 14))
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(AppColors.primaryText)
                 .lineLimit(2)
 
             Text(note.userNote)
-                .font(.callout)
-                .foregroundColor(.primary)
+                .font(.system(size: 14))
+                .foregroundColor(AppColors.secondaryText)
                 .lineLimit(3)
         }
-        .padding(.vertical, 4)
+        .glassCard(cornerRadius: 16, padding: 16)
     }
 }
 
+// MARK: - Favorite Row View
 struct FavoriteRowView: View {
     let favorite: FavoriteVerse
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Surah \(favorite.surahNumber):\(favorite.verseNumber)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack(spacing: 4) {
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 12))
+                    Text("Surah \(favorite.surahNumber):\(favorite.verseNumber)")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(AppColors.neonPink)
 
                 Spacer()
 
                 Image(systemName: "heart.fill")
-                    .foregroundColor(.red)
-                    .font(.caption)
+                    .foregroundColor(AppColors.neonPink)
+                    .font(.system(size: 16))
+                    .shadow(color: AppColors.neonPink.opacity(0.5), radius: 4)
             }
 
             Text(favorite.arabicText)
-                .font(.system(size: 16))
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(AppColors.primaryText)
 
             Text(favorite.englishTranslation)
-                .font(.callout)
-                .foregroundColor(.secondary)
+                .font(.system(size: 14))
+                .foregroundColor(AppColors.secondaryText)
         }
-        .padding(.vertical, 4)
+        .glassCard(cornerRadius: 16, padding: 16)
     }
 }
 
+// MARK: - Category Row View
 struct CategoryRowView: View {
     let category: NoteCategory
     @Query private var notes: [QuranNote]
@@ -300,20 +403,34 @@ struct CategoryRowView: View {
     }
 
     var body: some View {
-        HStack {
-            Image(systemName: "folder.fill")
-                .foregroundColor(Color(hex: category.colorHex))
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color(hex: category.colorHex).opacity(0.2))
+                    .frame(width: 56, height: 56)
 
-            VStack(alignment: .leading) {
+                Image(systemName: "folder.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(hex: category.colorHex))
+                    .shadow(color: Color(hex: category.colorHex).opacity(0.5), radius: 4)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
                 Text(category.name)
-                    .font(.headline)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(AppColors.primaryText)
 
                 Text("\(categoryNoteCount) note\(categoryNoteCount == 1 ? "" : "s")")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(AppColors.secondaryText)
             }
 
             Spacer()
+
+            Image(systemName: "chevron.right")
+                .foregroundColor(Color(hex: category.colorHex))
+                .font(.system(size: 14, weight: .bold))
         }
+        .glassCard(cornerRadius: 16, padding: 16)
     }
 }
