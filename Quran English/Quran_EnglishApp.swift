@@ -14,6 +14,10 @@ struct Quran_EnglishApp: App {
         let schema = Schema([
             QuranVerse.self,
             QuranWord.self,
+            Surah.self,
+            QuranNote.self,
+            NoteCategory.self,
+            FavoriteVerse.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
