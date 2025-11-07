@@ -12,7 +12,7 @@ struct ReadingModeView: View {
     let surah: Surah
     @Environment(\.modelContext) private var modelContext
     @Query private var favorites: [FavoriteVerse]
-    @State var preferences: UserPreferences
+    @Bindable var preferences: UserPreferences
 
     @State private var showCustomization = false
     @State private var showChatGPT = false
