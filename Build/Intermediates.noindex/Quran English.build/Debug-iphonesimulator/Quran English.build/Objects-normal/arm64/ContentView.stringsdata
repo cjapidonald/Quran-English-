@@ -1,0 +1,64 @@
+{
+  "source": "/Users/donaldcjapi/Desktop/Quraninenglish/Quran English/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Quran English",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "القرآن الكريم",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 22
+        }
+      },
+      {
+        "comment": "",
+        "key": "The Noble Quran",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap any Arabic word to see its English translation",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 30
+        }
+      },
+      {
+        "comment": "",
+        "key": "No verses loaded",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "Load Sample Data (Al-Fatiha)",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reload",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 77
+        }
+      }
+    ]
+  },
+  "version": 1
+}

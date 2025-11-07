@@ -1,0 +1,49 @@
+{
+  "" : {
+    "diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran English-primary.dia",
+    "emit-module-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran English-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran English-primary-emit-module.dia",
+    "pch" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran English-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran English-primary.swiftdeps"
+  },
+  "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/donaldcjapi/Desktop/Quraninenglish/Quran English/ContentView.swift" : {
+    "const-values" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/donaldcjapi/Desktop/Quraninenglish/Quran English/Item.swift" : {
+    "const-values" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.swiftconstvalues",
+    "dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.d",
+    "diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.dia",
+    "index-unit-output-path" : "/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.o",
+    "llvm-bc" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.bc",
+    "object" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.o",
+    "swift-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item.swiftdeps",
+    "swiftmodule" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Item~partial.swiftmodule"
+  },
+  "/Users/donaldcjapi/Desktop/Quraninenglish/Quran English/Quran_EnglishApp.swift" : {
+    "const-values" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.swiftconstvalues",
+    "dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.d",
+    "diagnostics" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.dia",
+    "index-unit-output-path" : "/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.o",
+    "llvm-bc" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.bc",
+    "object" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.o",
+    "swift-dependencies" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp.swiftdeps",
+    "swiftmodule" : "/Users/donaldcjapi/Desktop/Quraninenglish/Build/Intermediates.noindex/Quran English.build/Debug-iphonesimulator/Quran English.build/Objects-normal/arm64/Quran_EnglishApp~partial.swiftmodule"
+  }
+}
