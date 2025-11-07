@@ -1,0 +1,24 @@
+{
+  "source": "/Users/donaldcjapi/Desktop/Quran English/Quran English/Views/QuranVerseView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Surah %lld - Verse %lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "Translation:",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 43
+        }
+      }
+    ]
+  },
+  "version": 1
+}

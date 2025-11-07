@@ -1,0 +1,24 @@
+{
+  "source": "/Users/donaldcjapi/Desktop/Quran English/Quran English/Views/WordTranslationPopup.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "English Translation:",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 39
+        }
+      }
+    ]
+  },
+  "version": 1
+}
