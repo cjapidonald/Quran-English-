@@ -43,7 +43,7 @@ struct SurahsView: View {
                 } else {
                     List {
                         ForEach(surahs.sorted(by: { $0.surahNumber < $1.surahNumber })) { surah in
-                            NavigationLink(destination: ReadingModeView(surah: surah)) {
+                            NavigationLink(destination: ReadingModeView(surah: surah, preferences: preferences)) {
                                 SurahRowView(surah: surah)
                             }
                         }

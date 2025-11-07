@@ -16,13 +16,12 @@ final class NoteCategory {
     var createdAt: Date
 
     @Relationship(deleteRule: .nullify, inverse: \QuranNote.category)
-    var notes: [QuranNote]?
+    var notes: [QuranNote] = []
 
     init(name: String, colorHex: String) {
         self.id = UUID()
         self.name = name
         self.colorHex = colorHex
         self.createdAt = Date()
-        self.notes = []
     }
 }

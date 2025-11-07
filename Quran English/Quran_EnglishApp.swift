@@ -24,6 +24,13 @@ struct Quran_EnglishApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
+            print("❌ MODELCONTAINER ERROR: \(error)")
+            print("❌ ERROR DETAILS: \(error.localizedDescription)")
+            if let nsError = error as NSError? {
+                print("❌ ERROR CODE: \(nsError.code)")
+                print("❌ ERROR DOMAIN: \(nsError.domain)")
+                print("❌ ERROR USERINFO: \(nsError.userInfo)")
+            }
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
