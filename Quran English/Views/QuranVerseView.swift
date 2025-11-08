@@ -59,10 +59,16 @@ struct QuranVerseView: View {
                             selectedWord = nil
                         }
 
-                    WordTranslationPopup(word: word) {
-                        showTranslation = false
-                        selectedWord = nil
-                    }
+                    WordTranslationPopup(
+                        word: word,
+                        surahNumber: verse.surahNumber,
+                        surahName: "",  // Not available in this view
+                        verseNumber: verse.verseNumber,
+                        onDismiss: {
+                            showTranslation = false
+                            selectedWord = nil
+                        }
+                    )
                 }
             }
         )

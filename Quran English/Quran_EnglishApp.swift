@@ -29,6 +29,7 @@ struct Quran_EnglishApp: App {
             ReadingProgress.self,
             MemorizedVerse.self,
             VerseViewProgress.self,
+            SavedWord.self,
         ])
 
         // OPTION 1: Local-only storage (no CloudKit sync)

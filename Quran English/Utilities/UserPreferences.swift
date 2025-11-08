@@ -19,6 +19,10 @@ class UserPreferences {
     static let accentGreen = Color(red: 0.49, green: 0.95, blue: 0.26) // Apple Fitness green (Exercise ring) - Stronger/Brighter
     static let accentPink = Color(red: 0.98, green: 0.07, blue: 0.31) // Apple Fitness pink (Move ring)
 
+    // Faded colors for non-disturbing indicators
+    static let fadedGreen = Color(red: 0.49, green: 0.95, blue: 0.26).opacity(0.4) // Subtle green for verse indicators
+    static let fadedCyan = Color(red: 0.0, green: 0.78, blue: 0.75).opacity(0.5) // Subtle cyan for brain icons
+
     var textColor: Color {
         didSet { textColor.saveToUserDefaults(key: "textColor") }
     }

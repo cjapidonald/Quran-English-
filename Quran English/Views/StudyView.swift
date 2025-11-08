@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 enum StudySection: String, CaseIterable {
+    case words = "Words"
     case notes = "My Notes"
     case favorites = "Favorites"
     case categories = "Categories"
@@ -21,7 +22,7 @@ struct StudyView: View {
     @Query private var categories: [NoteCategory]
     @State private var preferences = UserPreferences.shared
 
-    @State private var selectedSection: StudySection = .notes
+    @State private var selectedSection: StudySection = .words
     @State private var selectedCategoryFilter: NoteCategory?
     @State private var showNewCategoryAlert = false
     @State private var newCategoryName = ""
@@ -41,6 +42,8 @@ struct StudyView: View {
                 // Content
                 Group {
                     switch selectedSection {
+                    case .words:
+                        WordsListView()
                     case .notes:
                         NotesListView(
                             notes: filteredNotes,

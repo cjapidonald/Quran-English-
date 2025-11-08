@@ -6,12 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct WordTranslationPopup: View {
     let word: QuranWord
+    let surahNumber: Int
+    let surahName: String
+    let verseNumber: Int
     let onDismiss: () -> Void
+
+    @Environment(\.modelContext) private var modelContext
+    @Query private var savedWords: [SavedWord]
+
     @State private var scale: CGFloat = 0.8
     @State private var opacity: Double = 0
+    @State private var showSavedConfirmation = false
+
+    // Check if this word is already saved
+    private var isWordSaved: Bool {
+        savedWords.contains { savedWord in
+            savedWord.arabicWord == word.arabic &&
+            savedWord.surahNumber == surahNumber &&
+            savedWord.verseNumber == verseNumber &&
+            savedWord.wordPosition == word.position
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -84,7 +103,27 @@ struct WordTranslationPopup: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
-            .padding(.bottom, 18)
+            .padding(.bottom, 12)
+
+            // Save to Words button
+            Button(action: saveWord) {
+                HStack(spacing: 8) {
+                    Image(systemName: isWordSaved ? "checkmark.circle.fill" : "plus.circle.fill")
+                        .font(.system(size: 16))
+                    Text(isWordSaved ? "Saved to Words" : "Save to Words")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .foregroundColor(isWordSaved ? UserPreferences.accentGreen : .white.opacity(0.9))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(isWordSaved ? UserPreferences.accentGreen.opacity(0.2) : Color.white.opacity(0.1))
+                )
+            }
+            .disabled(isWordSaved)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
 
             // Tap anywhere to close hint
             Text("Tap anywhere to close")
@@ -151,6 +190,34 @@ struct WordTranslationPopup: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 scale = 1.0
                 opacity = 1.0
+            }
+        }
+    }
+
+    private func saveWord() {
+        // Don't save if already saved
+        guard !isWordSaved else { return }
+
+        let savedWord = SavedWord(
+            arabicWord: word.arabic,
+            englishTranslation: word.englishTranslation,
+            surahNumber: surahNumber,
+            surahName: surahName,
+            verseNumber: verseNumber,
+            wordPosition: word.position
+        )
+
+        modelContext.insert(savedWord)
+        try? modelContext.save()
+
+        // Show brief confirmation
+        withAnimation {
+            showSavedConfirmation = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation {
+                showSavedConfirmation = false
             }
         }
     }

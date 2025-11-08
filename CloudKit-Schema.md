@@ -1,6 +1,26 @@
 # CloudKit Schema for Quran English App
 
-This document describes the CloudKit schema for syncing your SwiftData models.
+This document describes the complete CloudKit schema for syncing your SwiftData models with iCloud.
+
+## Overview
+
+The app uses **10 SwiftData models** that sync to CloudKit for data persistence and cross-device synchronization:
+
+### Quran Content Models (3):
+1. **QuranVerse** - Individual verses with Arabic and English text
+2. **QuranWord** - Individual Arabic words with translations
+3. **Surah** - Surah/Chapter information
+
+### User Private Data Models (7):
+4. **QuranNote** - User's personal notes on verses
+5. **NoteCategory** - Custom categories for organizing notes
+6. **FavoriteVerse** - Verses marked as favorites
+7. **MemorizedVerse** - Verses the user has memorized
+8. **ReadingProgress** - Scroll progress tracking per Surah
+9. **VerseViewProgress** - Tracks which verses have been viewed
+10. **SavedWord** - Vocabulary learning feature - words saved for study
+
+All user data is stored in the **private CloudKit database** (`iCloud.com.donald.kuranianglisht`) and syncs across devices signed in with the same Apple ID.
 
 ## How to Set Up CloudKit Container
 
@@ -123,6 +143,93 @@ Go to [CloudKit Dashboard](https://icloud.developer.apple.com/dashboard) and cre
 
 ---
 
+## Record Type: `CD_MemorizedVerse`
+
+| Field Name | Field Type | Options |
+|------------|-----------|---------|
+| `CD_id` | String | Queryable, Searchable |
+| `CD_surahNumber` | Int(64) | Queryable, Sortable |
+| `CD_verseNumber` | Int(64) | Queryable, Sortable |
+| `CD_arabicText` | String | |
+| `CD_memorizedAt` | Date/Time | Queryable, Sortable |
+
+**Indexes:**
+- `CD_surahNumber` (Queryable)
+- `CD_verseNumber` (Queryable)
+- `CD_memorizedAt` (Sortable)
+
+**Purpose**: Tracks verses that the user has memorized for review and tracking.
+
+---
+
+## Record Type: `CD_ReadingProgress`
+
+| Field Name | Field Type | Options |
+|------------|-----------|---------|
+| `CD_id` | String | Queryable, Searchable |
+| `CD_surahNumber` | Int(64) | Queryable, Sortable |
+| `CD_surahName` | String | Queryable |
+| `CD_progressPercentage` | Double | Queryable, Sortable |
+| `CD_lastReadAt` | Date/Time | Queryable, Sortable |
+
+**Indexes:**
+- `CD_surahNumber` (Queryable, Sortable)
+- `CD_lastReadAt` (Sortable)
+- `CD_progressPercentage` (Sortable)
+
+**Purpose**: Tracks the user's reading progress for each Surah with scroll percentage.
+
+---
+
+## Record Type: `CD_VerseViewProgress`
+
+| Field Name | Field Type | Options |
+|------------|-----------|---------|
+| `CD_id` | String | Queryable, Searchable |
+| `CD_surahNumber` | Int(64) | Queryable, Sortable |
+| `CD_verseNumber` | Int(64) | Queryable, Sortable |
+| `CD_hasBeenViewed` | Int(64) | Queryable |
+| `CD_viewedAt` | Date/Time | Queryable, Sortable |
+
+**Indexes:**
+- `CD_surahNumber` (Queryable)
+- `CD_verseNumber` (Queryable)
+- `CD_viewedAt` (Sortable)
+
+**Purpose**: Tracks which verses the user has viewed for progress tracking.
+
+**Note**: `CD_hasBeenViewed` uses Int(64) as CloudKit doesn't have a Boolean type. Use 0 for false, 1 for true.
+
+---
+
+## Record Type: `CD_SavedWord` (Vocabulary Learning)
+
+| Field Name | Field Type | Options |
+|------------|-----------|---------|
+| `CD_id` | String | Queryable, Searchable |
+| `CD_arabicWord` | String | Queryable, Searchable |
+| `CD_englishTranslation` | String | Queryable, Searchable |
+| `CD_surahNumber` | Int(64) | Queryable, Sortable |
+| `CD_surahName` | String | Queryable |
+| `CD_verseNumber` | Int(64) | Queryable, Sortable |
+| `CD_wordPosition` | Int(64) | Queryable |
+| `CD_savedAt` | Date/Time | Queryable, Sortable |
+| `CD_notes` | String | |
+| `CD_mastered` | Int(64) | Queryable |
+
+**Indexes:**
+- `CD_arabicWord` (Queryable, Searchable)
+- `CD_englishTranslation` (Queryable, Searchable)
+- `CD_surahNumber` (Queryable)
+- `CD_savedAt` (Sortable)
+- `CD_mastered` (Queryable)
+
+**Purpose**: User's personal vocabulary list. Words saved from translations for learning. Users can add personal notes and mark words as mastered.
+
+**Note**: `CD_mastered` uses Int(64) as CloudKit doesn't have a Boolean type. Use 0 for false, 1 for true.
+
+---
+
 ## Security Roles & Permissions
 
 ### For Development (Quick Setup):
@@ -132,7 +239,7 @@ Set all record types to:
 
 ### For Production:
 - **QuranVerse, QuranWord, Surah**: World Readable (read-only for all users)
-- **QuranNote, NoteCategory, FavoriteVerse**:
+- **User Private Data** (QuranNote, NoteCategory, FavoriteVerse, MemorizedVerse, ReadingProgress, VerseViewProgress, SavedWord):
   - Creator: Read, Write
   - Other users: No access (private data)
 
@@ -178,12 +285,16 @@ let userSchema = Schema([
     QuranNote.self,
     NoteCategory.self,
     FavoriteVerse.self,
+    MemorizedVerse.self,
+    ReadingProgress.self,
+    VerseViewProgress.self,
+    SavedWord.self,  // Vocabulary learning feature
 ])
 
 let userConfig = ModelConfiguration(
     schema: userSchema,
     isStoredInMemoryOnly: false,
-    cloudKitDatabase: .private
+    cloudKitDatabase: .private("iCloud.com.donald.kuranianglisht")
 )
 
 // Create container with both configurations
@@ -192,6 +303,33 @@ let container = try ModelContainer(
     configurations: [quranConfig, userConfig]
 )
 ```
+
+### Current Implementation (Single Container):
+
+Your app currently uses a single configuration for all models:
+
+```swift
+let schema = Schema([
+    QuranVerse.self,
+    QuranWord.self,
+    Surah.self,
+    QuranNote.self,
+    NoteCategory.self,
+    FavoriteVerse.self,
+    ReadingProgress.self,
+    MemorizedVerse.self,
+    VerseViewProgress.self,
+    SavedWord.self,
+])
+
+let modelConfiguration = ModelConfiguration(
+    schema: schema,
+    isStoredInMemoryOnly: false,
+    cloudKitDatabase: .private("iCloud.com.donald.kuranianglisht")
+)
+```
+
+This setup syncs all user data privately via CloudKit. Each user's vocabulary, notes, favorites, memorized verses, and reading progress are stored in their private iCloud database.
 
 ---
 
@@ -249,6 +387,43 @@ init() {
 2. Verify CloudKit capability is enabled
 3. Check Console logs for CloudKit errors
 4. Ensure you're using `.private` or `.automatic` for cloudKitDatabase
+
+---
+
+## Quick Reference: All Record Types
+
+| Record Type | Purpose | Key Fields | Privacy |
+|------------|---------|------------|---------|
+| `CD_QuranVerse` | Verse content | surahNumber, verseNumber, fullEnglishTranslation | Public/Shared |
+| `CD_QuranWord` | Word translations | arabic, englishTranslation, position | Public/Shared |
+| `CD_Surah` | Surah metadata | surahNumber, name, arabicName | Public/Shared |
+| `CD_QuranNote` | User notes | surahNumber, verseNumber, userNote, category | Private |
+| `CD_NoteCategory` | Note organization | name, colorHex | Private |
+| `CD_FavoriteVerse` | Favorited verses | surahNumber, verseNumber, addedAt | Private |
+| `CD_MemorizedVerse` | Memorized verses | surahNumber, verseNumber, memorizedAt | Private |
+| `CD_ReadingProgress` | Reading tracking | surahNumber, progressPercentage, lastReadAt | Private |
+| `CD_VerseViewProgress` | View tracking | surahNumber, verseNumber, hasBeenViewed | Private |
+| `CD_SavedWord` | Vocabulary learning | arabicWord, englishTranslation, notes, mastered | Private |
+
+---
+
+## Vocabulary Feature Details
+
+The **SavedWord** model enables users to build a personal vocabulary list:
+
+### Features:
+- **Save words from translations**: Tap a word to see its meaning, then save it to your vocabulary list
+- **Context preservation**: Each saved word includes its location (Surah, verse, word position)
+- **Personal notes**: Add custom notes to help remember word meanings
+- **Progress tracking**: Mark words as "mastered" to track learning progress
+- **Search & filter**: Search by Arabic or English, filter to show only unmastered words
+- **Cross-device sync**: Vocabulary syncs via CloudKit to all user devices
+
+### Use Cases:
+1. Student learning Quranic Arabic vocabulary
+2. Building a personal dictionary of frequently encountered words
+3. Tracking progress in Arabic language acquisition
+4. Creating custom word lists for review and memorization
 
 ---
 
