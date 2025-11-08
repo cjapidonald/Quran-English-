@@ -11,7 +11,7 @@ struct QuranVerseView: View {
     let verse: QuranVerse
     @State private var selectedWord: QuranWord?
     @State private var showTranslation = false
-    @State private var preferences = UserPreferences()
+    @State private var preferences = UserPreferences.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -29,7 +29,7 @@ struct QuranVerseView: View {
             }
 
             // Arabic text with tappable words (right-to-left) - NO BOX
-            FlowLayout(spacing: 12) {
+            FlowLayout(spacing: 6) {
                 ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
                     TappableWordView(word: word) { tappedWord in
                         selectedWord = tappedWord

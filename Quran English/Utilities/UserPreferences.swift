@@ -9,11 +9,15 @@ import SwiftUI
 
 @Observable
 class UserPreferences {
+    // Shared singleton instance
+    static let shared = UserPreferences()
+
     // Dark theme colors (Apple Fitness style)
     static let darkBackground = Color(red: 0.0, green: 0.0, blue: 0.0) // Pure black like Fitness
     static let darkText = Color(red: 0.95, green: 0.95, blue: 0.97) // Off-white for readability
     static let darkArabicText = Color(red: 1.0, green: 1.0, blue: 1.0) // Pure white for Arabic
-    static let accentGreen = Color(red: 0.64, green: 0.93, blue: 0.38) // Apple Fitness green
+    static let accentGreen = Color(red: 0.64, green: 0.93, blue: 0.38) // Apple Fitness green (Exercise ring)
+    static let accentPink = Color(red: 0.98, green: 0.07, blue: 0.31) // Apple Fitness pink (Move ring)
 
     var textColor: Color {
         didSet { textColor.saveToUserDefaults(key: "textColor") }

@@ -12,6 +12,9 @@ struct ReadingModeView: View {
     let surah: Surah
     @Environment(\.modelContext) private var modelContext
     @Query private var favorites: [FavoriteVerse]
+    @Query private var readingProgress: [ReadingProgress]
+    @Query private var memorizedVerses: [MemorizedVerse]
+    @Query private var verseViewProgress: [VerseViewProgress]
     @Bindable var preferences: UserPreferences
 
     @State private var showCustomization = false
@@ -20,20 +23,28 @@ struct ReadingModeView: View {
     @State private var selectedVerse: QuranVerse?
     @State private var showActionSheet = false
     @State private var showCopiedToast = false
+    @State private var scrollProgress: Double = 0.0
+    @State private var visibleVerses: Set<Int> = []
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 32) {
-                // Surah Header - Apple Fitness style
-                VStack(spacing: 12) {
+        ScrollViewReader { proxy in
+            ScrollView {
+                GeometryReader { scrollGeometry in
+                    Color.clear.preference(key: ViewGeometryPreferenceKey.self, value: scrollGeometry.size)
+                }
+                .frame(height: 0)
+
+                VStack(spacing: 24) {
+                // Surah Header - Elegant book style
+                VStack(spacing: 16) {
                     Text(surah.arabicName)
-                        .font(.custom("GeezaPro", size: 36))
+                        .font(.custom("GeezaPro", size: 42))
                         .foregroundColor(UserPreferences.darkArabicText)
-                        .fontWeight(.bold)
+                        .fontWeight(.semibold)
 
                     Text(surah.name)
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(preferences.textColor)
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundColor(preferences.textColor.opacity(0.9))
 
                     HStack(spacing: 8) {
                         Text(surah.revelationType)
@@ -42,44 +53,126 @@ struct ReadingModeView: View {
                             .frame(width: 4, height: 4)
                         Text("\(surah.numberOfVerses) verses")
                     }
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(preferences.textColor.opacity(0.6))
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(preferences.textColor.opacity(0.5))
+
+                    // Decorative divider
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.clear,
+                                    UserPreferences.accentGreen.opacity(0.3),
+                                    Color.clear
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(height: 1)
+                        .frame(maxWidth: 200)
+                        .padding(.top, 8)
                 }
-                .padding(.top, 24)
-                .padding(.bottom, 16)
+                .padding(.top, 32)
+                .padding(.bottom, 32)
 
-                // Verses - NO BOXES, clean flow
-                ForEach((surah.verses ?? []).sorted(by: { $0.verseNumber < $1.verseNumber })) { verse in
-                    VerseCardView(
-                        verse: verse,
-                        preferences: preferences,
-                        isFavorited: isFavorited(verse),
-                        onDoubleTap: { toggleFavorite(verse) },
-                        onLongPress: {
-                            selectedVerse = verse
-                            showActionSheet = true
+                // Book-like continuous flow of verses
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach((surah.verses ?? []).sorted(by: { $0.verseNumber < $1.verseNumber })) { verse in
+                        BookStyleVerseView(
+                            verse: verse,
+                            preferences: preferences,
+                            isFavorited: isFavorited(verse),
+                            isMemorized: isMemorized(verse),
+                            onDoubleTap: { toggleFavorite(verse) },
+                            onLongPress: {
+                                selectedVerse = verse
+                                showActionSheet = true
+                            }
+                        )
+                        .id(verse.verseNumber)
+                        .onAppear {
+                            markVerseAsViewed(verse)
                         }
-                    )
-                    .padding(.horizontal, 20)
-
-                    // Subtle divider between verses
-                    if verse.verseNumber < surah.numberOfVerses {
-                        Divider()
-                            .background(preferences.textColor.opacity(0.1))
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 8)
                     }
                 }
+                .padding(.horizontal, 24)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 16)
+            .background(
+                GeometryReader { contentGeometry in
+                    Color.clear.preference(key: ContentHeightPreferenceKey.self, value: contentGeometry.size.height)
+                }
+            )
+            }
+            .coordinateSpace(name: "scroll")
         }
         .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
         .navigationTitle(surah.name)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Calculate progress based on viewed verses
+            updateScrollProgress()
+        }
+        .onDisappear {
+            saveProgress()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { showCustomization = true }) {
-                    Image(systemName: "textformat.size")
+                HStack(spacing: 16) {
+                    // Language display toggle
+                    Menu {
+                        Button(action: {
+                            preferences.showArabic = true
+                            preferences.showEnglish = true
+                        }) {
+                            HStack {
+                                Text("Both")
+                                if preferences.showArabic && preferences.showEnglish {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+
+                        Button(action: {
+                            preferences.showArabic = true
+                            preferences.showEnglish = false
+                        }) {
+                            HStack {
+                                Text("Arabic Only")
+                                if preferences.showArabic && !preferences.showEnglish {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+
+                        Button(action: {
+                            preferences.showArabic = false
+                            preferences.showEnglish = true
+                        }) {
+                            HStack {
+                                Text("English Only")
+                                if !preferences.showArabic && preferences.showEnglish {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "text.bubble")
+                            .foregroundColor(UserPreferences.accentGreen)
+                    }
+
+                    // Mark as read button
+                    Button(action: markAsFullyRead) {
+                        Image(systemName: scrollProgress >= 100 ? "checkmark.circle.fill" : "checkmark.circle")
+                            .foregroundColor(scrollProgress >= 100 ? UserPreferences.accentGreen : .gray)
+                    }
+
+                    // Customization button
+                    Button(action: { showCustomization = true }) {
+                        Image(systemName: "textformat.size")
+                            .foregroundColor(UserPreferences.accentGreen)
+                    }
                 }
             }
         }
@@ -111,6 +204,10 @@ struct ReadingModeView: View {
 
             Button(isFavorited(verse) ? "Remove from Favorites" : "Add to Favorites") {
                 toggleFavorite(verse)
+            }
+
+            Button(isMemorized(verse) ? "Remove from Memorized" : "Mark as Memorized") {
+                toggleMemorization(verse)
             }
 
             Button("Cancel", role: .cancel) {}
@@ -178,12 +275,221 @@ struct ReadingModeView: View {
             }
         }
     }
+
+    private func markVerseAsViewed(_ verse: QuranVerse) {
+        // Check if this verse has already been marked as viewed
+        let existing = verseViewProgress.first(where: {
+            $0.surahNumber == verse.surahNumber && $0.verseNumber == verse.verseNumber
+        })
+
+        if existing == nil {
+            // Create new view progress record
+            let viewProgress = VerseViewProgress(
+                surahNumber: verse.surahNumber,
+                verseNumber: verse.verseNumber,
+                hasBeenViewed: true
+            )
+            modelContext.insert(viewProgress)
+            try? modelContext.save()
+
+            // Recalculate overall progress
+            updateScrollProgress()
+        }
+    }
+
+    private func updateScrollProgress() {
+        // Calculate progress based on verses actually viewed
+        let totalVerses = surah.numberOfVerses
+        guard totalVerses > 0 else { return }
+
+        // Count how many verses of this surah have been viewed
+        let viewedCount = verseViewProgress.filter {
+            $0.surahNumber == surah.surahNumber && $0.hasBeenViewed
+        }.count
+
+        // Calculate percentage
+        let newProgress = (Double(viewedCount) / Double(totalVerses)) * 100.0
+        scrollProgress = min(newProgress, 100.0)
+
+        // Save progress
+        saveProgress()
+    }
+
+    private func markAsFullyRead() {
+        // Mark all verses as viewed
+        for verse in (surah.verses ?? []) {
+            let existing = verseViewProgress.first(where: {
+                $0.surahNumber == verse.surahNumber && $0.verseNumber == verse.verseNumber
+            })
+
+            if existing == nil {
+                let viewProgress = VerseViewProgress(
+                    surahNumber: verse.surahNumber,
+                    verseNumber: verse.verseNumber,
+                    hasBeenViewed: true
+                )
+                modelContext.insert(viewProgress)
+            }
+        }
+        try? modelContext.save()
+
+        scrollProgress = 100.0
+        saveProgress()
+    }
+
+    private func loadProgress() {
+        if let existing = readingProgress.first(where: { $0.surahNumber == surah.surahNumber }) {
+            scrollProgress = existing.progressPercentage
+        }
+    }
+
+    private func saveProgress() {
+        if let existing = readingProgress.first(where: { $0.surahNumber == surah.surahNumber }) {
+            existing.progressPercentage = scrollProgress
+            existing.lastReadAt = Date()
+        } else {
+            let newProgress = ReadingProgress(
+                surahNumber: surah.surahNumber,
+                surahName: surah.name,
+                progressPercentage: scrollProgress
+            )
+            modelContext.insert(newProgress)
+        }
+        try? modelContext.save()
+    }
+
+    private func isMemorized(_ verse: QuranVerse) -> Bool {
+        memorizedVerses.contains { $0.surahNumber == verse.surahNumber && $0.verseNumber == verse.verseNumber }
+    }
+
+    private func toggleMemorization(_ verse: QuranVerse) {
+        if let existing = memorizedVerses.first(where: { $0.surahNumber == verse.surahNumber && $0.verseNumber == verse.verseNumber }) {
+            modelContext.delete(existing)
+        } else {
+            let memorized = MemorizedVerse(
+                surahNumber: verse.surahNumber,
+                verseNumber: verse.verseNumber,
+                arabicText: verse.fullArabicText
+            )
+            modelContext.insert(memorized)
+        }
+        try? modelContext.save()
+    }
 }
 
+// Preference Keys
+struct ViewGeometryPreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
+    }
+}
+
+struct ContentHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+// Book-style verse view - continuous flowing text like a traditional book
+struct BookStyleVerseView: View {
+    let verse: QuranVerse
+    let preferences: UserPreferences
+    let isFavorited: Bool
+    let isMemorized: Bool
+    let onDoubleTap: () -> Void
+    let onLongPress: () -> Void
+
+    @State private var selectedWord: QuranWord?
+    @State private var showTranslation = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            // Verse number in margin (book-style)
+            VStack(spacing: 4) {
+                Text("\(verse.verseNumber)")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(UserPreferences.accentGreen.opacity(0.7))
+                    .frame(width: 32)
+
+                // Status indicators (subtle, in margin)
+                if isFavorited {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(UserPreferences.accentGreen.opacity(0.5))
+                }
+
+                if isMemorized {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 10))
+                        .foregroundColor(Color(red: 0.0, green: 0.78, blue: 0.75).opacity(0.5))
+                }
+            }
+            .frame(width: 32)
+            .padding(.top, 4)
+
+            // Verse content - flowing like book text
+            VStack(alignment: .leading, spacing: 16) {
+                // Arabic text - continuous flow
+                if preferences.showArabic {
+                    FlowLayout(spacing: 6) {
+                        ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
+                            TappableWordView(word: word) { tappedWord in
+                                selectedWord = tappedWord
+                                showTranslation = true
+                            }
+                        }
+                    }
+                    .environment(\.layoutDirection, .rightToLeft)
+                }
+
+                // English translation - book paragraph style
+                if preferences.showEnglish {
+                    Text(verse.fullEnglishTranslation)
+                        .font(.system(size: preferences.englishFontSize, weight: .regular))
+                        .foregroundColor(preferences.textColor.opacity(0.8))
+                        .lineSpacing(7)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(.bottom, 20) // Spacing between verses, like paragraphs
+        }
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            onDoubleTap()
+        }
+        .onLongPressGesture {
+            onLongPress()
+        }
+        .overlay(
+            Group {
+                if showTranslation, let word = selectedWord {
+                    Color.black.opacity(0.4)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            showTranslation = false
+                            selectedWord = nil
+                        }
+
+                    WordTranslationPopup(word: word) {
+                        showTranslation = false
+                        selectedWord = nil
+                    }
+                }
+            }
+        )
+    }
+}
+
+// Legacy VerseCardView - kept for compatibility with other views
 struct VerseCardView: View {
     let verse: QuranVerse
     let preferences: UserPreferences
     let isFavorited: Bool
+    let isMemorized: Bool
     let onDoubleTap: () -> Void
     let onLongPress: () -> Void
 
@@ -209,12 +515,18 @@ struct VerseCardView: View {
                         .foregroundColor(UserPreferences.accentGreen)
                 }
 
+                if isMemorized {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(red: 0.0, green: 0.78, blue: 0.75))
+                }
+
                 Spacer()
             }
 
             // Arabic text with tappable words - NO BOX
             if preferences.showArabic {
-                FlowLayout(spacing: 12) {
+                FlowLayout(spacing: 6) {
                     ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
                         TappableWordView(word: word) { tappedWord in
                             selectedWord = tappedWord

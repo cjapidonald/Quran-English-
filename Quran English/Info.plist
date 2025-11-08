@@ -8,5 +8,13 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>2</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleExecutable</key>
+	<string></string>
+	<key></key>
+	<string>6.0</string>
+    <key>NSAppleEventsUsageDescription</key>
+      <string>Sign in with your Apple ID to sync your Quran study data</string>
 </dict>
 </plist>

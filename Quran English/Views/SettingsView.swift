@@ -11,7 +11,7 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var notes: [QuranNote]
-    @State private var preferences = UserPreferences()
+    @State private var preferences = UserPreferences.shared
 
     @State private var showExportSheet = false
     @State private var exportURL: URL?

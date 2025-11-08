@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @State private var preferences = UserPreferences.shared
+
     var body: some View {
         TabView {
             SurahsView()
                 .tabItem {
                     Label("Surahs", systemImage: "book")
+                }
+
+            StatsView()
+                .tabItem {
+                    Label("Stats", systemImage: "chart.pie.fill")
                 }
 
             StudyView()
@@ -25,5 +32,6 @@ struct MainTabView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
+        .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
     }
 }

@@ -19,6 +19,7 @@ struct StudyView: View {
     @Query private var notes: [QuranNote]
     @Query private var favorites: [FavoriteVerse]
     @Query private var categories: [NoteCategory]
+    @State private var preferences = UserPreferences.shared
 
     @State private var selectedSection: StudySection = .notes
     @State private var selectedCategoryFilter: NoteCategory?
@@ -62,6 +63,8 @@ struct StudyView: View {
                 }
             }
             .navigationTitle("Study")
+            .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
+            .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
             .alert("New Category", isPresented: $showNewCategoryAlert) {
                 TextField("Category Name", text: $newCategoryName)
                 Button("Cancel", role: .cancel) {
@@ -235,8 +238,8 @@ struct CategoriesListView: View {
                 Label("Create New Category", systemImage: "plus.circle.fill")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(UserPreferences.accentGreen)
+                    .foregroundColor(UserPreferences.darkBackground)
                     .cornerRadius(10)
             }
             .padding()
