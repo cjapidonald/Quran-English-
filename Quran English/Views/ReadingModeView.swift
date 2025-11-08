@@ -46,7 +46,7 @@ struct ReadingModeView: View {
                 VStack(spacing: 16) {
                     Text(surah.arabicName)
                         .font(.custom("Lateef", size: 42))
-                        .foregroundColor(UserPreferences.darkArabicText)
+                        .foregroundColor(preferences.arabicTextColor)
 
                     Text(surah.name)
                         .font(.system(size: 22, weight: .regular))

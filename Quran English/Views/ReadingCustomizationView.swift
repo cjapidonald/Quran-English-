@@ -14,27 +14,6 @@ struct ReadingCustomizationView: View {
     var body: some View {
         NavigationView {
             Form {
-                // Theme
-                Section {
-                    Toggle(isOn: Binding(
-                        get: { preferences.isDarkMode },
-                        set: { newValue in
-                            preferences.isDarkMode = newValue
-                            preferences.toggleThemeColors(to: newValue)
-                        }
-                    )) {
-                        HStack {
-                            Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
-                                .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
-                            Text("Dark Mode")
-                        }
-                    }
-                } header: {
-                    Text("Appearance")
-                } footer: {
-                    Text("Apple Fitness-inspired dark theme with pure black background")
-                }
-
                 // Display Options
                 Section("Display Options") {
                     Toggle("Show Arabic Text", isOn: $preferences.showArabic)

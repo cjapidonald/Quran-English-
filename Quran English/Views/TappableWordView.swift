@@ -35,7 +35,7 @@ struct TappableWordView: View {
     var body: some View {
         Text(word.arabic)
             .font(.custom("Lateef", size: preferences.arabicFontSize))
-            .foregroundColor(UserPreferences.darkArabicText)
+            .foregroundColor(preferences.arabicTextColor)
             .padding(.horizontal, 2)
             .padding(.vertical, 2)
             .scaleEffect(isPressed ? 0.95 : 1.0)

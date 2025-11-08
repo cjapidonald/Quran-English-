@@ -19,6 +19,11 @@ class UserPreferences {
     static let accentGreen = Color(red: 0.49, green: 0.95, blue: 0.26) // Apple Fitness green (Exercise ring) - Stronger/Brighter
     static let accentPink = Color(red: 0.98, green: 0.07, blue: 0.31) // Apple Fitness pink (Move ring)
 
+    // Light theme colors
+    static let lightBackground = Color(red: 1.0, green: 1.0, blue: 1.0) // Pure white
+    static let lightText = Color(red: 0.0, green: 0.0, blue: 0.0) // Pure black
+    static let lightArabicText = Color(red: 0.0, green: 0.0, blue: 0.0) // Pure black for Arabic in light mode
+
     // Faded colors for non-disturbing indicators
     static let fadedGreen = Color(red: 0.49, green: 0.95, blue: 0.26).opacity(0.4) // Subtle green for verse indicators
     static let fadedCyan = Color(red: 0.0, green: 0.78, blue: 0.75).opacity(0.5) // Subtle cyan for brain icons
@@ -51,6 +56,11 @@ class UserPreferences {
         didSet { UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode") }
     }
 
+    // Computed property for Arabic text color based on theme
+    var arabicTextColor: Color {
+        isDarkMode ? UserPreferences.darkArabicText : UserPreferences.lightArabicText
+    }
+
     init() {
         // Load saved preferences or use dark theme defaults (Apple Fitness style)
         self.isDarkMode = UserDefaults.standard.object(forKey: "isDarkMode") as? Bool ?? true
@@ -78,8 +88,8 @@ class UserPreferences {
             textColor = UserPreferences.darkText
             backgroundColor = UserPreferences.darkBackground
         } else {
-            textColor = .black
-            backgroundColor = .white
+            textColor = UserPreferences.lightText
+            backgroundColor = UserPreferences.lightBackground
         }
     }
 
@@ -88,8 +98,8 @@ class UserPreferences {
             textColor = UserPreferences.darkText
             backgroundColor = UserPreferences.darkBackground
         } else {
-            textColor = .black
-            backgroundColor = .white
+            textColor = UserPreferences.lightText
+            backgroundColor = UserPreferences.lightBackground
         }
     }
 }

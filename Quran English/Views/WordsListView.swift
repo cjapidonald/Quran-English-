@@ -11,6 +11,7 @@ import SwiftData
 struct WordsListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \SavedWord.savedAt, order: .reverse) private var savedWords: [SavedWord]
+    @State private var preferences = UserPreferences.shared
     @State private var searchText = ""
     @State private var showOnlyUnmastered = false
     @State private var selectedWord: SavedWord?
@@ -128,20 +129,21 @@ struct WordsListView: View {
 // MARK: - Word Row
 struct WordRowView: View {
     let word: SavedWord
+    @State private var preferences = UserPreferences.shared
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             // Arabic word
             Text(word.arabicWord)
                 .font(.custom("Lateef", size: 32))
-                .foregroundColor(UserPreferences.darkArabicText)
+                .foregroundColor(preferences.arabicTextColor)
                 .frame(width: 80, alignment: .trailing)
 
             VStack(alignment: .leading, spacing: 6) {
                 // English translation
                 Text(word.englishTranslation)
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(UserPreferences.darkText)
+                    .foregroundColor(preferences.textColor)
 
                 // Surah reference
                 HStack(spacing: 6) {
@@ -156,13 +158,13 @@ struct WordRowView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundColor(UserPreferences.darkText.opacity(0.6))
+                .foregroundColor(preferences.textColor.opacity(0.6))
 
                 // Notes preview if exists
                 if !word.notes.isEmpty {
                     Text(word.notes)
                         .font(.caption)
-                        .foregroundColor(UserPreferences.darkText.opacity(0.5))
+                        .foregroundColor(preferences.textColor.opacity(0.5))
                         .lineLimit(2)
                         .padding(.top, 4)
                 }
@@ -186,6 +188,7 @@ struct WordDetailSheet: View {
     let word: SavedWord
     let modelContext: ModelContext
 
+    @State private var preferences = UserPreferences.shared
     @State private var notes: String
     @Environment(\.dismiss) private var dismiss
 
@@ -202,7 +205,7 @@ struct WordDetailSheet: View {
                     // Arabic word
                     Text(word.arabicWord)
                         .font(.custom("Lateef", size: 48))
-                        .foregroundColor(UserPreferences.darkArabicText)
+                        .foregroundColor(preferences.arabicTextColor)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20)
                 } header: {

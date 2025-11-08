@@ -41,13 +41,18 @@ struct SettingsView: View {
                         }
                     }
 
-                    HStack {
-                        Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
-                            .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
-                        Text("Current Theme")
-                        Spacer()
-                        Text(preferences.isDarkMode ? "Dark" : "Light")
-                            .foregroundColor(.secondary)
+                    Toggle(isOn: Binding(
+                        get: { preferences.isDarkMode },
+                        set: { newValue in
+                            preferences.isDarkMode = newValue
+                            preferences.toggleThemeColors(to: newValue)
+                        }
+                    )) {
+                        HStack {
+                            Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
+                                .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
+                            Text("Theme")
+                        }
                     }
                 } header: {
                     Text("Appearance")
