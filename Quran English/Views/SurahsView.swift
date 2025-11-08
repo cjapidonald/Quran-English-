@@ -17,14 +17,19 @@ struct SurahsView: View {
     @State private var searchText = ""
     @State private var showSearch = false
 
-    // Filtered surahs based on search text
+    // Filtered surahs based on search text - searches both Arabic and English deeply
     private var filteredSurahs: [Surah] {
         if searchText.isEmpty {
             return surahs
         } else {
             return surahs.filter { surah in
-                // Search by surah name
+                // Search by English surah name
                 if surah.name.localizedCaseInsensitiveContains(searchText) {
+                    return true
+                }
+
+                // Search by Arabic surah name
+                if surah.arabicName.contains(searchText) {
                     return true
                 }
 
@@ -33,10 +38,37 @@ struct SurahsView: View {
                     return true
                 }
 
-                // Search in verse translations
+                // Deep search in verses
                 if let verses = surah.verses {
                     return verses.contains { verse in
-                        verse.fullEnglishTranslation.localizedCaseInsensitiveContains(searchText)
+                        // Search in English translation
+                        if verse.fullEnglishTranslation.localizedCaseInsensitiveContains(searchText) {
+                            return true
+                        }
+
+                        // Search in full Arabic text
+                        if verse.fullArabicText.contains(searchText) {
+                            return true
+                        }
+
+                        // Search in individual word translations and Arabic
+                        if let words = verse.words {
+                            return words.contains { word in
+                                // Search word English translation
+                                if word.englishTranslation.localizedCaseInsensitiveContains(searchText) {
+                                    return true
+                                }
+
+                                // Search word Arabic text
+                                if word.arabic.contains(searchText) {
+                                    return true
+                                }
+
+                                return false
+                            }
+                        }
+
+                        return false
                     }
                 }
 
@@ -52,21 +84,21 @@ struct SurahsView: View {
                     VStack(spacing: 20) {
                         Image(systemName: "book.closed")
                             .font(.system(size: 60))
-                            .foregroundColor(UserPreferences.darkText.opacity(0.5))
+                            .foregroundColor(preferences.textColor.opacity(0.5))
 
                         Text("No Surahs Available")
                             .font(.headline)
-                            .foregroundColor(UserPreferences.darkText.opacity(0.7))
+                            .foregroundColor(preferences.textColor.opacity(0.7))
 
                         Text("Load sample data to get started")
                             .font(.caption)
-                            .foregroundColor(UserPreferences.darkText.opacity(0.6))
+                            .foregroundColor(preferences.textColor.opacity(0.6))
 
                         Button(action: { showLoadDataAlert = true }) {
                             Label("Load Sample Data", systemImage: "arrow.down.circle.fill")
                                 .padding()
                                 .background(UserPreferences.accentGreen)
-                                .foregroundColor(UserPreferences.darkBackground)
+                                .foregroundColor(.white)
                                 .cornerRadius(10)
                         }
                     }
@@ -96,7 +128,7 @@ struct SurahsView: View {
                 }
             }
             .navigationTitle("Quran")
-            .searchable(text: $searchText, isPresented: $showSearch, prompt: "Search in English...")
+            .searchable(text: $searchText, isPresented: $showSearch, prompt: "Search in Arabic or English...")
             .toolbar {
                 if !surahs.isEmpty {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -198,6 +230,7 @@ struct SurahRowView: View {
 // MARK: - Progress Bar Component
 struct SurahProgressBar: View {
     let progress: Double
+    @State private var preferences = UserPreferences.shared
 
     // Conditional color based on progress percentage
     private var progressColor: Color {
@@ -216,7 +249,7 @@ struct SurahProgressBar: View {
                 Text("Reading Progress")
                     .font(.caption2)
                     .fontWeight(.medium)
-                    .foregroundColor(UserPreferences.darkText.opacity(0.5))
+                    .foregroundColor(preferences.textColor.opacity(0.5))
 
                 Spacer()
 
@@ -231,7 +264,7 @@ struct SurahProgressBar: View {
                 ZStack(alignment: .leading) {
                     // Background track
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.white.opacity(0.1))
+                        .fill(preferences.textColor.opacity(0.1))
                         .frame(height: 6)
 
                     // Progress fill with gradient
