@@ -17,14 +17,14 @@ struct MainTabView: View {
                     Label("Surahs", systemImage: "book")
                 }
 
-            StatsView()
-                .tabItem {
-                    Label("Stats", systemImage: "chart.pie.fill")
-                }
-
             StudyView()
                 .tabItem {
                     Label("Study", systemImage: "note.text")
+                }
+
+            StatsView()
+                .tabItem {
+                    Label("Stats", systemImage: "chart.pie.fill")
                 }
 
             SettingsView()

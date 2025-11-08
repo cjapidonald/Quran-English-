@@ -66,19 +66,19 @@ struct WordsListView: View {
         VStack(spacing: 20) {
             Image(systemName: "book.closed")
                 .font(.system(size: 60))
-                .foregroundColor(UserPreferences.darkText.opacity(0.5))
+                .foregroundColor(preferences.textColor.opacity(0.5))
 
             Text("No Saved Words")
                 .font(.headline)
-                .foregroundColor(UserPreferences.darkText.opacity(0.7))
+                .foregroundColor(preferences.textColor.opacity(0.7))
 
             Text("Tap on any word while reading\nto save it to your vocabulary list")
                 .font(.caption)
-                .foregroundColor(UserPreferences.darkText.opacity(0.6))
+                .foregroundColor(preferences.textColor.opacity(0.6))
                 .multilineTextAlignment(.center)
         }
         .frame(maxHeight: .infinity)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
     }
 
     // MARK: - Words List
@@ -86,7 +86,7 @@ struct WordsListView: View {
         List {
             ForEach(filteredWords) { word in
                 WordRowView(word: word)
-                    .listRowBackground(Color.black)
+                    .listRowBackground(preferences.backgroundColor)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             deleteWord(word)
@@ -111,7 +111,7 @@ struct WordsListView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
     }
 
     // MARK: - Actions
@@ -215,7 +215,7 @@ struct WordDetailSheet: View {
                 Section {
                     Text(word.englishTranslation)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(UserPreferences.darkText)
+                        .foregroundColor(preferences.textColor)
                 } header: {
                     Text("Translation")
                 }

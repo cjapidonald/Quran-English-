@@ -107,8 +107,20 @@ struct StudyView: View {
     private func createNewCategory() {
         guard !newCategoryName.isEmpty else { return }
 
-        let colors = ["#3498db", "#e74c3c", "#2ecc71", "#f39c12", "#9b59b6", "#1abc9c"]
-        let randomColor = colors.randomElement() ?? "#3498db"
+        // Vivid, strong colors for categories
+        let colors = [
+            "#FF3B30", // Vivid Red
+            "#FF9500", // Vivid Orange
+            "#FFCC00", // Vivid Yellow
+            "#34C759", // Vivid Green
+            "#00C7BE", // Vivid Teal
+            "#007AFF", // Vivid Blue
+            "#5856D6", // Vivid Indigo
+            "#AF52DE", // Vivid Purple
+            "#FF2D55", // Vivid Pink
+            "#FF6B35", // Vivid Coral
+        ]
+        let randomColor = colors.randomElement() ?? "#007AFF"
 
         let newCategory = NoteCategory(name: newCategoryName, colorHex: randomColor)
         modelContext.insert(newCategory)

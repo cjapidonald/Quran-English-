@@ -18,6 +18,7 @@ struct WordTranslationPopup: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var savedWords: [SavedWord]
 
+    @State private var preferences = UserPreferences.shared
     @State private var scale: CGFloat = 0.8
     @State private var opacity: Double = 0
     @State private var showSavedConfirmation = false
@@ -45,7 +46,7 @@ struct WordTranslationPopup: View {
                 Button(action: onDismiss) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 24))
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(preferences.textColor.opacity(0.7))
                 }
             }
             .padding(.horizontal, 20)
@@ -54,17 +55,17 @@ struct WordTranslationPopup: View {
 
             // Arabic word - More compact with better contrast
             ZStack {
-                // Dark background for word to stand out
+                // Background for word to stand out
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.5))
+                    .fill(preferences.isDarkMode ? Color.black.opacity(0.5) : Color.white.opacity(0.8))
                     .frame(height: 60)
                     .padding(.horizontal, 16)
 
                 Text(word.arabic)
                     .font(.custom("Lateef", size: 40))
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .shadow(color: .black, radius: 3, x: 0, y: 2)
+                    .foregroundColor(preferences.arabicTextColor)
+                    .shadow(color: preferences.isDarkMode ? .black : .white, radius: 3, x: 0, y: 2)
                     .shadow(color: UserPreferences.accentGreen.opacity(0.6), radius: 12, x: 0, y: 0)
             }
             .padding(.vertical, 8)
@@ -97,7 +98,7 @@ struct WordTranslationPopup: View {
 
                 Text(word.englishTranslation)
                     .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.white.opacity(0.95))
+                    .foregroundColor(preferences.textColor.opacity(0.95))
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -113,12 +114,12 @@ struct WordTranslationPopup: View {
                     Text(isWordSaved ? "Saved to Words" : "Save to Words")
                         .font(.system(size: 14, weight: .semibold))
                 }
-                .foregroundColor(isWordSaved ? UserPreferences.accentGreen : .white.opacity(0.9))
+                .foregroundColor(isWordSaved ? UserPreferences.accentGreen : preferences.textColor.opacity(0.9))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(isWordSaved ? UserPreferences.accentGreen.opacity(0.2) : Color.white.opacity(0.1))
+                        .fill(isWordSaved ? UserPreferences.accentGreen.opacity(0.2) : preferences.textColor.opacity(0.1))
                 )
             }
             .disabled(isWordSaved)
@@ -128,23 +129,26 @@ struct WordTranslationPopup: View {
             // Tap anywhere to close hint
             Text("Tap anywhere to close")
                 .font(.caption2)
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(preferences.textColor.opacity(0.4))
                 .padding(.bottom, 12)
         }
         .frame(maxWidth: 300)
         .background(
             // Glassmorphism effect
             ZStack {
-                // Dark translucent background with blur
+                // Translucent background with blur
                 RoundedRectangle(cornerRadius: 28)
                     .fill(.ultraThinMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [
+                                    gradient: Gradient(colors: preferences.isDarkMode ? [
                                         Color.black.opacity(0.7),
                                         Color(red: 0.1, green: 0.1, blue: 0.15).opacity(0.8)
+                                    ] : [
+                                        Color.white.opacity(0.9),
+                                        Color(red: 0.95, green: 0.95, blue: 0.97).opacity(0.95)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -159,7 +163,7 @@ struct WordTranslationPopup: View {
                             gradient: Gradient(colors: [
                                 UserPreferences.accentGreen.opacity(0.5),
                                 UserPreferences.accentGreen.opacity(0.1),
-                                Color.white.opacity(0.2)
+                                preferences.textColor.opacity(0.2)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -172,7 +176,7 @@ struct WordTranslationPopup: View {
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                .white.opacity(0.15),
+                                preferences.textColor.opacity(0.15),
                                 .clear
                             ]),
                             startPoint: .top,
@@ -182,7 +186,7 @@ struct WordTranslationPopup: View {
             }
         )
         .shadow(color: UserPreferences.accentGreen.opacity(0.2), radius: 30, x: 0, y: 10)
-        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+        .shadow(color: preferences.isDarkMode ? .black.opacity(0.3) : .gray.opacity(0.2), radius: 20, x: 0, y: 10)
         .padding(40)
         .scaleEffect(scale)
         .opacity(opacity)

@@ -43,7 +43,7 @@ struct StatsView: View {
                         ZStack {
                             // Background circle
                             Circle()
-                                .stroke(Color.white.opacity(0.1), lineWidth: 20)
+                                .stroke(preferences.textColor.opacity(0.1), lineWidth: 20)
                                 .frame(width: 200, height: 200)
 
                             // Progress circle
@@ -62,7 +62,7 @@ struct StatsView: View {
                                 )
                                 .frame(width: 200, height: 200)
                                 .rotationEffect(.degrees(-90))
-                                .shadow(color: UserPreferences.accentPink.opacity(0.5), radius: 10, x: 0, y: 0)
+                                .shadow(color: UserPreferences.accentPink.opacity(0.3), radius: 10, x: 0, y: 0)
 
                             // Center text
                             VStack(spacing: 4) {
@@ -94,7 +94,7 @@ struct StatsView: View {
                         ZStack {
                             // Background circle
                             Circle()
-                                .stroke(Color.white.opacity(0.1), lineWidth: 20)
+                                .stroke(preferences.textColor.opacity(0.1), lineWidth: 20)
                                 .frame(width: 200, height: 200)
 
                             // Progress circle
@@ -113,7 +113,7 @@ struct StatsView: View {
                                 )
                                 .frame(width: 200, height: 200)
                                 .rotationEffect(.degrees(-90))
-                                .shadow(color: UserPreferences.accentGreen.opacity(0.5), radius: 10, x: 0, y: 0)
+                                .shadow(color: UserPreferences.accentGreen.opacity(0.3), radius: 10, x: 0, y: 0)
 
                             // Center text
                             VStack(spacing: 4) {
@@ -200,6 +200,7 @@ struct StatsCard: View {
     let title: String
     let value: String
     let color: Color
+    @State private var preferences = UserPreferences.shared
 
     var body: some View {
         HStack(spacing: 16) {
@@ -213,17 +214,17 @@ struct StatsCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(UserPreferences.darkText.opacity(0.6))
+                    .foregroundColor(preferences.textColor.opacity(0.6))
 
                 Text(value)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(UserPreferences.darkText)
+                    .foregroundColor(preferences.textColor)
             }
 
             Spacer()
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(preferences.textColor.opacity(0.05))
         .cornerRadius(12)
     }
 }

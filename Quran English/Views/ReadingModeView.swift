@@ -15,6 +15,7 @@ struct ReadingModeView: View {
     @Query private var readingProgress: [ReadingProgress]
     @Query private var memorizedVerses: [MemorizedVerse]
     @Query private var verseViewProgress: [VerseViewProgress]
+    @Query private var notes: [QuranNote]
     @Bindable var preferences: UserPreferences
 
     @State private var showCustomization = false
@@ -96,7 +97,8 @@ struct ReadingModeView: View {
                         },
                         onVerseAppear: markVerseAsViewed,
                         isFavorited: isFavorited,
-                        isMemorized: isMemorized
+                        isMemorized: isMemorized,
+                        getCategoryColor: getCategoryColor
                     )
                     .padding(.horizontal, 24)
                 } else {
@@ -110,6 +112,7 @@ struct ReadingModeView: View {
                                 isMemorized: isMemorized(verse),
                                 selectedWord: $selectedWord,
                                 showTranslation: $showWordTranslation,
+                                categoryColor: getCategoryColor(for: verse),
                                 onDoubleTap: { toggleFavorite(verse) },
                                 onLongPress: {
                                     selectedVerse = verse
@@ -440,6 +443,17 @@ struct ReadingModeView: View {
         }
         try? modelContext.save()
     }
+
+    // Helper to get category color for a verse
+    private func getCategoryColor(for verse: QuranVerse) -> Color? {
+        if let note = notes.first(where: {
+            $0.surahNumber == verse.surahNumber &&
+            $0.verseNumber == verse.verseNumber
+        }), let category = note.category {
+            return Color(hex: category.colorHex)
+        }
+        return nil
+    }
 }
 
 // Preference Keys
@@ -469,6 +483,7 @@ struct FluidReadingView: View {
     let onVerseAppear: (QuranVerse) -> Void
     let isFavorited: (QuranVerse) -> Bool
     let isMemorized: (QuranVerse) -> Bool
+    let getCategoryColor: (QuranVerse) -> Color?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -515,36 +530,45 @@ struct FluidReadingView: View {
     @ViewBuilder
     private func inlineArabicVerseIndicator(_ verse: QuranVerse) -> some View {
         let indicatorColor = preferences.isDarkMode ? Color.white.opacity(0.3) : Color.black.opacity(0.3)
+        let categoryColor = getCategoryColor(verse)
 
         HStack(spacing: 1) {
             // Closing bracket (RTL - appears on right side)
             Text("]")
                 .font(.system(size: preferences.arabicFontSize * 0.5, weight: .regular))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
 
             // Brain if memorized
             if isMemorized(verse) {
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: preferences.arabicFontSize * 0.35))
-                    .foregroundColor(indicatorColor)
+                    .foregroundColor(categoryColor ?? indicatorColor)
             }
 
             // Heart if favorited
             if isFavorited(verse) {
                 Image(systemName: "heart.fill")
                     .font(.system(size: preferences.arabicFontSize * 0.35))
-                    .foregroundColor(indicatorColor)
+                    .foregroundColor(categoryColor ?? indicatorColor)
             }
 
-            // Verse number
+            // Verse number with category color highlight
             Text("\(verse.verseNumber)")
                 .font(.system(size: preferences.arabicFontSize * 0.5, weight: .semibold))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
+                .padding(.horizontal, categoryColor != nil ? 4 : 0)
+                .padding(.vertical, categoryColor != nil ? 2 : 0)
+                .background(
+                    categoryColor != nil ?
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(categoryColor!.opacity(0.2))
+                    : nil
+                )
 
             // Opening bracket (RTL - appears on left side)
             Text("[")
                 .font(.system(size: preferences.arabicFontSize * 0.5, weight: .regular))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
         }
         .onAppear {
             onVerseAppear(verse)
@@ -584,36 +608,45 @@ struct FluidReadingView: View {
     @ViewBuilder
     private func inlineEnglishVerseIndicator(_ verse: QuranVerse) -> some View {
         let indicatorColor = preferences.isDarkMode ? Color.white.opacity(0.3) : Color.black.opacity(0.3)
+        let categoryColor = getCategoryColor(verse)
 
         HStack(spacing: 2) {
             // Opening bracket
             Text("[")
                 .font(.system(size: preferences.englishFontSize - 2, weight: .regular))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
 
-            // Verse number
+            // Verse number with category color highlight
             Text("\(verse.verseNumber)")
                 .font(.system(size: preferences.englishFontSize - 2, weight: .semibold))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
+                .padding(.horizontal, categoryColor != nil ? 4 : 0)
+                .padding(.vertical, categoryColor != nil ? 2 : 0)
+                .background(
+                    categoryColor != nil ?
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(categoryColor!.opacity(0.2))
+                    : nil
+                )
 
             // Heart if favorited
             if isFavorited(verse) {
                 Image(systemName: "heart.fill")
                     .font(.system(size: preferences.englishFontSize * 0.6))
-                    .foregroundColor(indicatorColor)
+                    .foregroundColor(categoryColor ?? indicatorColor)
             }
 
             // Brain if memorized
             if isMemorized(verse) {
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: preferences.englishFontSize * 0.6))
-                    .foregroundColor(indicatorColor)
+                    .foregroundColor(categoryColor ?? indicatorColor)
             }
 
             // Closing bracket
             Text("]")
                 .font(.system(size: preferences.englishFontSize - 2, weight: .regular))
-                .foregroundColor(indicatorColor)
+                .foregroundColor(categoryColor ?? indicatorColor)
         }
         .onAppear {
             onVerseAppear(verse)
@@ -670,23 +703,31 @@ struct BookStyleVerseView: View {
     let isMemorized: Bool
     @Binding var selectedWord: QuranWord?
     @Binding var showTranslation: Bool
+    let categoryColor: Color?
     let onDoubleTap: () -> Void
     let onLongPress: () -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
+            // Category color indicator (leading border)
+            if let color = categoryColor {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(color)
+                    .frame(width: 4)
+            }
+
             // Verse number in margin (book-style)
             VStack(spacing: 4) {
                 Text("\(verse.verseNumber)")
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(UserPreferences.accentGreen.opacity(0.7))
+                    .foregroundColor(categoryColor ?? UserPreferences.accentGreen.opacity(0.7))
                     .frame(width: 32)
 
                 // Status indicators (subtle, in margin)
                 if isFavorited {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 10))
-                        .foregroundColor(UserPreferences.accentGreen.opacity(0.5))
+                        .foregroundColor(categoryColor ?? UserPreferences.accentGreen.opacity(0.5))
                 }
 
                 if isMemorized {
