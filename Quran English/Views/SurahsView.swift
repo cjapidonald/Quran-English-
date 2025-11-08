@@ -146,13 +146,13 @@ struct SurahsView: View {
                     }
                 }
             }
-            .alert("Load Sample Data", isPresented: $showLoadDataAlert) {
+            .alert("Load Quran Data", isPresented: $showLoadDataAlert) {
                 Button("Cancel", role: .cancel) {}
                 Button("Load") {
                     loadSampleData()
                 }
             } message: {
-                Text("This will load Al-Fatiha and Al-Ikhlas with word-by-word translations. Any existing data will be replaced.")
+                Text("This will load all 114 surahs with metadata. Complete word-by-word translations are included for Al-Fatiha, Al-Ikhlas, Al-Falaq, and An-Nas. Any existing data will be replaced.")
             }
             .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
         }
@@ -164,9 +164,9 @@ struct SurahsView: View {
             modelContext.delete(surah)
         }
 
-        // Load sample surahs
-        let sampleSurahs = SampleSurahData.createSampleSurahs()
-        for surah in sampleSurahs {
+        // Load comprehensive Quran data (all 114 surahs)
+        let allSurahs = ComprehensiveQuranData.createAllSurahs()
+        for surah in allSurahs {
             modelContext.insert(surah)
         }
 
