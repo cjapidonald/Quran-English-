@@ -29,17 +29,26 @@ struct WordTranslationPopup: View {
                         .foregroundColor(.white.opacity(0.7))
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 20)
-            .padding(.bottom, 8)
+            .padding(.horizontal, 20)
+            .padding(.top, 14)
+            .padding(.bottom, 6)
 
-            // Arabic word - Large and centered
-            Text(word.arabic)
-                .font(.custom("GeezaPro", size: 52))
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.vertical, 20)
-                .shadow(color: UserPreferences.accentGreen.opacity(0.3), radius: 10, x: 0, y: 0)
+            // Arabic word - More compact with better contrast
+            ZStack {
+                // Dark background for word to stand out
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.5))
+                    .frame(height: 60)
+                    .padding(.horizontal, 16)
+
+                Text(word.arabic)
+                    .font(.custom("Lateef", size: 40))
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 3, x: 0, y: 2)
+                    .shadow(color: UserPreferences.accentGreen.opacity(0.6), radius: 12, x: 0, y: 0)
+            }
+            .padding(.vertical, 8)
 
             // Subtle divider with gradient
             Rectangle()
@@ -55,8 +64,8 @@ struct WordTranslationPopup: View {
                     )
                 )
                 .frame(height: 1)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
 
             // English translation section
             VStack(alignment: .leading, spacing: 12) {
@@ -68,22 +77,22 @@ struct WordTranslationPopup: View {
                     .tracking(1.2)
 
                 Text(word.englishTranslation)
-                    .font(.system(size: 22, weight: .medium))
+                    .font(.system(size: 17, weight: .medium))
                     .foregroundColor(.white.opacity(0.95))
-                    .lineSpacing(4)
+                    .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 28)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 18)
 
             // Tap anywhere to close hint
             Text("Tap anywhere to close")
                 .font(.caption2)
                 .foregroundColor(.white.opacity(0.4))
-                .padding(.bottom, 16)
+                .padding(.bottom, 12)
         }
-        .frame(maxWidth: 340)
+        .frame(maxWidth: 300)
         .background(
             // Glassmorphism effect
             ZStack {

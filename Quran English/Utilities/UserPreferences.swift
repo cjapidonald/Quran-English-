@@ -16,7 +16,7 @@ class UserPreferences {
     static let darkBackground = Color(red: 0.0, green: 0.0, blue: 0.0) // Pure black like Fitness
     static let darkText = Color(red: 0.95, green: 0.95, blue: 0.97) // Off-white for readability
     static let darkArabicText = Color(red: 1.0, green: 1.0, blue: 1.0) // Pure white for Arabic
-    static let accentGreen = Color(red: 0.64, green: 0.93, blue: 0.38) // Apple Fitness green (Exercise ring)
+    static let accentGreen = Color(red: 0.49, green: 0.95, blue: 0.26) // Apple Fitness green (Exercise ring) - Stronger/Brighter
     static let accentPink = Color(red: 0.98, green: 0.07, blue: 0.31) // Apple Fitness pink (Move ring)
 
     var textColor: Color {
@@ -71,6 +71,16 @@ class UserPreferences {
     func toggleTheme() {
         isDarkMode.toggle()
         if isDarkMode {
+            textColor = UserPreferences.darkText
+            backgroundColor = UserPreferences.darkBackground
+        } else {
+            textColor = .black
+            backgroundColor = .white
+        }
+    }
+
+    func toggleThemeColors(to darkMode: Bool) {
+        if darkMode {
             textColor = UserPreferences.darkText
             backgroundColor = UserPreferences.darkBackground
         } else {

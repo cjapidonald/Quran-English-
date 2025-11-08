@@ -25,6 +25,8 @@ struct ReadingModeView: View {
     @State private var showCopiedToast = false
     @State private var scrollProgress: Double = 0.0
     @State private var visibleVerses: Set<Int> = []
+    @State private var selectedWord: QuranWord?
+    @State private var showWordTranslation = false
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -38,9 +40,8 @@ struct ReadingModeView: View {
                 // Surah Header - Elegant book style
                 VStack(spacing: 16) {
                     Text(surah.arabicName)
-                        .font(.custom("GeezaPro", size: 42))
+                        .font(.custom("Lateef", size: 42))
                         .foregroundColor(UserPreferences.darkArabicText)
-                        .fontWeight(.semibold)
 
                     Text(surah.name)
                         .font(.system(size: 22, weight: .regular))
@@ -84,6 +85,8 @@ struct ReadingModeView: View {
                             preferences: preferences,
                             isFavorited: isFavorited(verse),
                             isMemorized: isMemorized(verse),
+                            selectedWord: $selectedWord,
+                            showTranslation: $showWordTranslation,
                             onDoubleTap: { toggleFavorite(verse) },
                             onLongPress: {
                                 selectedVerse = verse
@@ -214,25 +217,47 @@ struct ReadingModeView: View {
         } message: { verse in
             Text("Surah \(verse.surahNumber):\(verse.verseNumber)")
         }
-        .overlay(
-            Group {
-                if showCopiedToast {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                            Text("Verse copied to clipboard")
-                        }
-                        .padding()
-                        .background(Color(uiColor: .systemGray6))
-                        .cornerRadius(10)
-                        .shadow(radius: 10)
-                        .padding(.bottom, 50)
-                    }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
+        .overlay(alignment: .bottom) {
+            if showCopiedToast {
+                copiedToastView
             }
-        )
+        }
+        .overlay {
+            if showWordTranslation, let word = selectedWord {
+                wordTranslationOverlay(for: word)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var copiedToastView: some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+            Text("Verse copied to clipboard")
+        }
+        .padding()
+        .background(Color(uiColor: .systemGray6))
+        .cornerRadius(10)
+        .shadow(radius: 10)
+        .padding(.bottom, 50)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    @ViewBuilder
+    private func wordTranslationOverlay(for word: QuranWord) -> some View {
+        ZStack {
+            Color.black.opacity(0.85)
+                .edgesIgnoringSafeArea(.all)
+                .onTapGesture {
+                    showWordTranslation = false
+                    selectedWord = nil
+                }
+
+            WordTranslationPopup(word: word) {
+                showWordTranslation = false
+                selectedWord = nil
+            }
+        }
     }
 
     private func isFavorited(_ verse: QuranVerse) -> Bool {
@@ -400,11 +425,10 @@ struct BookStyleVerseView: View {
     let preferences: UserPreferences
     let isFavorited: Bool
     let isMemorized: Bool
+    @Binding var selectedWord: QuranWord?
+    @Binding var showTranslation: Bool
     let onDoubleTap: () -> Void
     let onLongPress: () -> Void
-
-    @State private var selectedWord: QuranWord?
-    @State private var showTranslation = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -464,23 +488,6 @@ struct BookStyleVerseView: View {
         .onLongPressGesture {
             onLongPress()
         }
-        .overlay(
-            Group {
-                if showTranslation, let word = selectedWord {
-                    Color.black.opacity(0.4)
-                        .edgesIgnoringSafeArea(.all)
-                        .onTapGesture {
-                            showTranslation = false
-                            selectedWord = nil
-                        }
-
-                    WordTranslationPopup(word: word) {
-                        showTranslation = false
-                        selectedWord = nil
-                    }
-                }
-            }
-        )
     }
 }
 

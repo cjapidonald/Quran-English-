@@ -16,15 +16,18 @@ struct ReadingCustomizationView: View {
             Form {
                 // Theme
                 Section {
-                    Toggle(isOn: $preferences.isDarkMode) {
+                    Toggle(isOn: Binding(
+                        get: { preferences.isDarkMode },
+                        set: { newValue in
+                            preferences.isDarkMode = newValue
+                            preferences.toggleThemeColors(to: newValue)
+                        }
+                    )) {
                         HStack {
                             Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
                                 .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
                             Text("Dark Mode")
                         }
-                    }
-                    .onChange(of: preferences.isDarkMode) { oldValue, newValue in
-                        preferences.toggleTheme()
                     }
                 } header: {
                     Text("Appearance")
@@ -53,7 +56,7 @@ struct ReadingCustomizationView: View {
                         // Preview text
                         if preferences.showArabic {
                             Text("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ")
-                                .font(.custom("GeezaPro", size: preferences.arabicFontSize))
+                                .font(.custom("Lateef", size: preferences.arabicFontSize))
                                 .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -126,7 +129,7 @@ struct ReadingCustomizationView: View {
 
                             if preferences.showArabic {
                                 Text("الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ")
-                                    .font(.custom("GeezaPro", size: preferences.arabicFontSize))
+                                    .font(.custom("Lateef", size: preferences.arabicFontSize))
                                     .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                             }

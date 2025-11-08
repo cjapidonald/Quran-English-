@@ -172,7 +172,7 @@ struct SurahRowView: View {
                     Spacer()
 
                     Text(surah.arabicName)
-                        .font(.custom("GeezaPro", size: 18))
+                        .font(.custom("Lateef", size: 18))
                         .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
                 }
 
