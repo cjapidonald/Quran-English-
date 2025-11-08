@@ -10,15 +10,17 @@ import SwiftData
 
 @Model
 final class Surah {
-    var id: UUID
-    var surahNumber: Int
-    var name: String
-    var arabicName: String
-    var revelationType: String // "Meccan" or "Medinan"
-    var numberOfVerses: Int
-    var verses: [QuranVerse]
+    var id: UUID = UUID()
+    var surahNumber: Int = 0
+    var name: String = ""
+    var arabicName: String = ""
+    var revelationType: String = "" // "Meccan" or "Medinan"
+    var numberOfVerses: Int = 0
 
-    init(surahNumber: Int, name: String, arabicName: String, revelationType: String, numberOfVerses: Int, verses: [QuranVerse] = []) {
+    @Relationship(deleteRule: .cascade)
+    var verses: [QuranVerse]? = []
+
+    init(surahNumber: Int, name: String, arabicName: String, revelationType: String, numberOfVerses: Int, verses: [QuranVerse]? = []) {
         self.id = UUID()
         self.surahNumber = surahNumber
         self.name = name

@@ -10,16 +10,16 @@ import SwiftData
 
 @Model
 final class QuranNote {
-    var id: UUID
-    var surahNumber: Int
-    var verseNumber: Int
-    var arabicText: String
-    var englishTranslation: String
-    var userNote: String
-    var createdAt: Date
-    var updatedAt: Date
+    var id: UUID = UUID()
+    var surahNumber: Int = 0
+    var verseNumber: Int = 0
+    var arabicText: String = ""
+    var englishTranslation: String = ""
+    var userNote: String = ""
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
 
-    @Relationship(deleteRule: .nullify)
+    @Relationship(deleteRule: .nullify, inverse: \NoteCategory.notes)
     var category: NoteCategory?
 
     init(surahNumber: Int, verseNumber: Int, arabicText: String, englishTranslation: String, userNote: String, category: NoteCategory? = nil) {

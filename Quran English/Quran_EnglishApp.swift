@@ -10,6 +10,14 @@ import SwiftData
 
 @main
 struct Quran_EnglishApp: App {
+    init() {
+        // Enable CloudKit debug logging for monitoring sync
+        UserDefaults.standard.set(true, forKey: "com.apple.CoreData.CloudKitDebug")
+        print("🔵 CloudKit Debug Logging Enabled")
+        print("🔵 Container: iCloud.com.donald.kuranianglisht")
+        print("🔵 Watching for sync activity...")
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             QuranVerse.self,
@@ -19,7 +27,19 @@ struct Quran_EnglishApp: App {
             NoteCategory.self,
             FavoriteVerse.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        // OPTION 1: Local-only storage (no CloudKit sync)
+        // let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        // OPTION 2: Enable CloudKit sync - CURRENTLY ACTIVE
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .private("iCloud.com.donald.kuranianglisht")
+        )
+
+        // OPTION 3: Separate configs for shared and private data (recommended)
+        // See CloudKit-Schema.md for full setup instructions
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -31,7 +51,15 @@ struct Quran_EnglishApp: App {
                 print("❌ ERROR DOMAIN: \(nsError.domain)")
                 print("❌ ERROR USERINFO: \(nsError.userInfo)")
             }
-            fatalError("Could not create ModelContainer: \(error)")
+
+            // If CloudKit fails, fall back to local-only storage
+            print("⚠️ CloudKit ModelContainer failed. Trying local-only storage...")
+            do {
+                let fallbackConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+                return try ModelContainer(for: schema, configurations: [fallbackConfig])
+            } catch {
+                fatalError("Could not create ModelContainer even with fallback: \(error)")
+            }
         }
     }()
 

@@ -11,14 +11,48 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var notes: [QuranNote]
+    @State private var preferences = UserPreferences()
 
     @State private var showExportSheet = false
     @State private var exportURL: URL?
     @State private var showExportSuccess = false
+    @State private var showCustomization = false
 
     var body: some View {
         NavigationView {
             Form {
+                // Appearance
+                Section {
+                    Button(action: { showCustomization = true }) {
+                        HStack {
+                            Image(systemName: "paintbrush.fill")
+                                .foregroundColor(UserPreferences.accentGreen)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Reading Customization")
+                                    .foregroundColor(.primary)
+                                Text("Fonts, colors, and theme settings")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    HStack {
+                        Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
+                            .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
+                        Text("Current Theme")
+                        Spacer()
+                        Text(preferences.isDarkMode ? "Dark" : "Light")
+                            .foregroundColor(.secondary)
+                    }
+                } header: {
+                    Text("Appearance")
+                }
+
                 // Statistics
                 Section {
                     HStack {
@@ -101,6 +135,9 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $showCustomization) {
+                ReadingCustomizationView(preferences: preferences)
+            }
             .sheet(isPresented: $showExportSheet) {
                 if let url = exportURL {
                     ShareSheet(activityItems: [url])

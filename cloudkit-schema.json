@@ -1,0 +1,299 @@
+{
+  "recordTypes": [
+    {
+      "name": "CD_QuranVerse",
+      "fields": [
+        {
+          "name": "CD_id",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_fullEnglishTranslation",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_words",
+          "type": "REFERENCE_LIST",
+          "referenceType": "CD_QuranWord"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_surahNumber",
+          "fieldName": "CD_surahNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "fieldName": "CD_verseNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_id",
+          "fieldName": "CD_id",
+          "fieldValueType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "CD_QuranWord",
+      "fields": [
+        {
+          "name": "CD_arabic",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_englishTranslation",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_position",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_verseId",
+          "type": "STRING"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_verseId",
+          "fieldName": "CD_verseId",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_position",
+          "fieldName": "CD_position",
+          "fieldValueType": "INT64"
+        }
+      ]
+    },
+    {
+      "name": "CD_Surah",
+      "fields": [
+        {
+          "name": "CD_id",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_name",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_arabicName",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_revelationType",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_numberOfVerses",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_verses",
+          "type": "REFERENCE_LIST",
+          "referenceType": "CD_QuranVerse"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_id",
+          "fieldName": "CD_id",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "fieldName": "CD_surahNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_name",
+          "fieldName": "CD_name",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_revelationType",
+          "fieldName": "CD_revelationType",
+          "fieldValueType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "CD_QuranNote",
+      "fields": [
+        {
+          "name": "CD_id",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_arabicText",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_englishTranslation",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_userNote",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_createdAt",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "CD_updatedAt",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "CD_category",
+          "type": "REFERENCE",
+          "referenceType": "CD_NoteCategory"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_id",
+          "fieldName": "CD_id",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "fieldName": "CD_surahNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "fieldName": "CD_verseNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_createdAt",
+          "fieldName": "CD_createdAt",
+          "fieldValueType": "TIMESTAMP"
+        },
+        {
+          "name": "CD_updatedAt",
+          "fieldName": "CD_updatedAt",
+          "fieldValueType": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "name": "CD_NoteCategory",
+      "fields": [
+        {
+          "name": "CD_id",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_name",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_colorHex",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_createdAt",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "CD_notes",
+          "type": "REFERENCE_LIST",
+          "referenceType": "CD_QuranNote"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_id",
+          "fieldName": "CD_id",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_name",
+          "fieldName": "CD_name",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_createdAt",
+          "fieldName": "CD_createdAt",
+          "fieldValueType": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "name": "CD_FavoriteVerse",
+      "fields": [
+        {
+          "name": "CD_id",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "type": "INT64"
+        },
+        {
+          "name": "CD_arabicText",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_englishTranslation",
+          "type": "STRING"
+        },
+        {
+          "name": "CD_addedAt",
+          "type": "TIMESTAMP"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "CD_id",
+          "fieldName": "CD_id",
+          "fieldValueType": "STRING"
+        },
+        {
+          "name": "CD_surahNumber",
+          "fieldName": "CD_surahNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_verseNumber",
+          "fieldName": "CD_verseNumber",
+          "fieldValueType": "INT64"
+        },
+        {
+          "name": "CD_addedAt",
+          "fieldName": "CD_addedAt",
+          "fieldValueType": "TIMESTAMP"
+        }
+      ]
+    }
+  ]
+}

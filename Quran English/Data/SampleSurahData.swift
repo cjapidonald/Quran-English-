@@ -49,10 +49,10 @@ struct SampleSurahData {
             fullEnglishTranslation: "In the name of Allah, the Most Gracious, the Most Merciful"
         )
         verse1.words = [
-            QuranWord(arabic: "بِسْمِ", englishTranslation: "In the name", position: 0, verseId: verse1.id),
-            QuranWord(arabic: "اللَّهِ", englishTranslation: "of Allah", position: 1, verseId: verse1.id),
-            QuranWord(arabic: "الرَّحْمَٰنِ", englishTranslation: "the Most Gracious", position: 2, verseId: verse1.id),
-            QuranWord(arabic: "الرَّحِيمِ", englishTranslation: "the Most Merciful", position: 3, verseId: verse1.id)
+            QuranWord(arabic: "بِسْمِ", englishTranslation: "In the name", position: 0),
+            QuranWord(arabic: "اللَّهِ", englishTranslation: "of Allah", position: 1),
+            QuranWord(arabic: "الرَّحْمَٰنِ", englishTranslation: "the Most Gracious", position: 2),
+            QuranWord(arabic: "الرَّحِيمِ", englishTranslation: "the Most Merciful", position: 3)
         ]
         verses.append(verse1)
 
@@ -64,10 +64,10 @@ struct SampleSurahData {
             fullEnglishTranslation: "All praise is for Allah—Lord of all worlds"
         )
         verse2.words = [
-            QuranWord(arabic: "الْحَمْدُ", englishTranslation: "All praise", position: 0, verseId: verse2.id),
-            QuranWord(arabic: "لِلَّهِ", englishTranslation: "is for Allah", position: 1, verseId: verse2.id),
-            QuranWord(arabic: "رَبِّ", englishTranslation: "Lord", position: 2, verseId: verse2.id),
-            QuranWord(arabic: "الْعَالَمِينَ", englishTranslation: "of the worlds", position: 3, verseId: verse2.id)
+            QuranWord(arabic: "الْحَمْدُ", englishTranslation: "All praise", position: 0),
+            QuranWord(arabic: "لِلَّهِ", englishTranslation: "is for Allah", position: 1),
+            QuranWord(arabic: "رَبِّ", englishTranslation: "Lord", position: 2),
+            QuranWord(arabic: "الْعَالَمِينَ", englishTranslation: "of the worlds", position: 3)
         ]
         verses.append(verse2)
 
@@ -79,8 +79,8 @@ struct SampleSurahData {
             fullEnglishTranslation: "The Most Compassionate, Most Merciful"
         )
         verse3.words = [
-            QuranWord(arabic: "الرَّحْمَٰنِ", englishTranslation: "The Most Gracious", position: 0, verseId: verse3.id),
-            QuranWord(arabic: "الرَّحِيمِ", englishTranslation: "the Most Merciful", position: 1, verseId: verse3.id)
+            QuranWord(arabic: "الرَّحْمَٰنِ", englishTranslation: "The Most Gracious", position: 0),
+            QuranWord(arabic: "الرَّحِيمِ", englishTranslation: "the Most Merciful", position: 1)
         ]
         verses.append(verse3)
 
@@ -92,9 +92,9 @@ struct SampleSurahData {
             fullEnglishTranslation: "Master of the Day of Judgment"
         )
         verse4.words = [
-            QuranWord(arabic: "مَالِكِ", englishTranslation: "Master", position: 0, verseId: verse4.id),
-            QuranWord(arabic: "يَوْمِ", englishTranslation: "of the Day", position: 1, verseId: verse4.id),
-            QuranWord(arabic: "الدِّينِ", englishTranslation: "of Judgment", position: 2, verseId: verse4.id)
+            QuranWord(arabic: "مَالِكِ", englishTranslation: "Master", position: 0),
+            QuranWord(arabic: "يَوْمِ", englishTranslation: "of the Day", position: 1),
+            QuranWord(arabic: "الدِّينِ", englishTranslation: "of Judgment", position: 2)
         ]
         verses.append(verse4)
 
@@ -106,10 +106,10 @@ struct SampleSurahData {
             fullEnglishTranslation: "You alone we worship and You alone we ask for help"
         )
         verse5.words = [
-            QuranWord(arabic: "إِيَّاكَ", englishTranslation: "You alone", position: 0, verseId: verse5.id),
-            QuranWord(arabic: "نَعْبُدُ", englishTranslation: "we worship", position: 1, verseId: verse5.id),
-            QuranWord(arabic: "وَإِيَّاكَ", englishTranslation: "and You alone", position: 2, verseId: verse5.id),
-            QuranWord(arabic: "نَسْتَعِينُ", englishTranslation: "we ask for help", position: 3, verseId: verse5.id)
+            QuranWord(arabic: "إِيَّاكَ", englishTranslation: "You alone", position: 0),
+            QuranWord(arabic: "نَعْبُدُ", englishTranslation: "we worship", position: 1),
+            QuranWord(arabic: "وَإِيَّاكَ", englishTranslation: "and You alone", position: 2),
+            QuranWord(arabic: "نَسْتَعِينُ", englishTranslation: "we ask for help", position: 3)
         ]
         verses.append(verse5)
 
@@ -121,9 +121,9 @@ struct SampleSurahData {
             fullEnglishTranslation: "Guide us along the Straight Path"
         )
         verse6.words = [
-            QuranWord(arabic: "اهْدِنَا", englishTranslation: "Guide us", position: 0, verseId: verse6.id),
-            QuranWord(arabic: "الصِّرَاطَ", englishTranslation: "to the path", position: 1, verseId: verse6.id),
-            QuranWord(arabic: "الْمُسْتَقِيمَ", englishTranslation: "the straight", position: 2, verseId: verse6.id)
+            QuranWord(arabic: "اهْدِنَا", englishTranslation: "Guide us", position: 0),
+            QuranWord(arabic: "الصِّرَاطَ", englishTranslation: "to the path", position: 1),
+            QuranWord(arabic: "الْمُسْتَقِيمَ", englishTranslation: "the straight", position: 2)
         ]
         verses.append(verse6)
 
@@ -135,15 +135,15 @@ struct SampleSurahData {
             fullEnglishTranslation: "The Path of those You have blessed—not those You are displeased with, or those who are astray"
         )
         verse7.words = [
-            QuranWord(arabic: "صِرَاطَ", englishTranslation: "The path", position: 0, verseId: verse7.id),
-            QuranWord(arabic: "الَّذِينَ", englishTranslation: "of those", position: 1, verseId: verse7.id),
-            QuranWord(arabic: "أَنْعَمْتَ", englishTranslation: "You have blessed", position: 2, verseId: verse7.id),
-            QuranWord(arabic: "عَلَيْهِمْ", englishTranslation: "upon them", position: 3, verseId: verse7.id),
-            QuranWord(arabic: "غَيْرِ", englishTranslation: "not", position: 4, verseId: verse7.id),
-            QuranWord(arabic: "الْمَغْضُوبِ", englishTranslation: "of those who earned Your anger", position: 5, verseId: verse7.id),
-            QuranWord(arabic: "عَلَيْهِمْ", englishTranslation: "upon them", position: 6, verseId: verse7.id),
-            QuranWord(arabic: "وَلَا", englishTranslation: "and not", position: 7, verseId: verse7.id),
-            QuranWord(arabic: "الضَّالِّينَ", englishTranslation: "those who are astray", position: 8, verseId: verse7.id)
+            QuranWord(arabic: "صِرَاطَ", englishTranslation: "The path", position: 0),
+            QuranWord(arabic: "الَّذِينَ", englishTranslation: "of those", position: 1),
+            QuranWord(arabic: "أَنْعَمْتَ", englishTranslation: "You have blessed", position: 2),
+            QuranWord(arabic: "عَلَيْهِمْ", englishTranslation: "upon them", position: 3),
+            QuranWord(arabic: "غَيْرِ", englishTranslation: "not", position: 4),
+            QuranWord(arabic: "الْمَغْضُوبِ", englishTranslation: "of those who earned Your anger", position: 5),
+            QuranWord(arabic: "عَلَيْهِمْ", englishTranslation: "upon them", position: 6),
+            QuranWord(arabic: "وَلَا", englishTranslation: "and not", position: 7),
+            QuranWord(arabic: "الضَّالِّينَ", englishTranslation: "those who are astray", position: 8)
         ]
         verses.append(verse7)
 
@@ -161,10 +161,10 @@ struct SampleSurahData {
             fullEnglishTranslation: "Say, He is Allah, the One"
         )
         verse1.words = [
-            QuranWord(arabic: "قُلْ", englishTranslation: "Say", position: 0, verseId: verse1.id),
-            QuranWord(arabic: "هُوَ", englishTranslation: "He is", position: 1, verseId: verse1.id),
-            QuranWord(arabic: "اللَّهُ", englishTranslation: "Allah", position: 2, verseId: verse1.id),
-            QuranWord(arabic: "أَحَدٌ", englishTranslation: "the One", position: 3, verseId: verse1.id)
+            QuranWord(arabic: "قُلْ", englishTranslation: "Say", position: 0),
+            QuranWord(arabic: "هُوَ", englishTranslation: "He is", position: 1),
+            QuranWord(arabic: "اللَّهُ", englishTranslation: "Allah", position: 2),
+            QuranWord(arabic: "أَحَدٌ", englishTranslation: "the One", position: 3)
         ]
         verses.append(verse1)
 
@@ -176,8 +176,8 @@ struct SampleSurahData {
             fullEnglishTranslation: "Allah, the Eternal Refuge"
         )
         verse2.words = [
-            QuranWord(arabic: "اللَّهُ", englishTranslation: "Allah", position: 0, verseId: verse2.id),
-            QuranWord(arabic: "الصَّمَدُ", englishTranslation: "the Eternal Refuge", position: 1, verseId: verse2.id)
+            QuranWord(arabic: "اللَّهُ", englishTranslation: "Allah", position: 0),
+            QuranWord(arabic: "الصَّمَدُ", englishTranslation: "the Eternal Refuge", position: 1)
         ]
         verses.append(verse2)
 
@@ -189,10 +189,10 @@ struct SampleSurahData {
             fullEnglishTranslation: "He neither begets nor is born"
         )
         verse3.words = [
-            QuranWord(arabic: "لَمْ", englishTranslation: "He has not", position: 0, verseId: verse3.id),
-            QuranWord(arabic: "يَلِدْ", englishTranslation: "begotten", position: 1, verseId: verse3.id),
-            QuranWord(arabic: "وَلَمْ", englishTranslation: "and not", position: 2, verseId: verse3.id),
-            QuranWord(arabic: "يُولَدْ", englishTranslation: "was He begotten", position: 3, verseId: verse3.id)
+            QuranWord(arabic: "لَمْ", englishTranslation: "He has not", position: 0),
+            QuranWord(arabic: "يَلِدْ", englishTranslation: "begotten", position: 1),
+            QuranWord(arabic: "وَلَمْ", englishTranslation: "and not", position: 2),
+            QuranWord(arabic: "يُولَدْ", englishTranslation: "was He begotten", position: 3)
         ]
         verses.append(verse3)
 
@@ -204,11 +204,11 @@ struct SampleSurahData {
             fullEnglishTranslation: "Nor is there to Him any equivalent"
         )
         verse4.words = [
-            QuranWord(arabic: "وَلَمْ", englishTranslation: "And not", position: 0, verseId: verse4.id),
-            QuranWord(arabic: "يَكُن", englishTranslation: "is", position: 1, verseId: verse4.id),
-            QuranWord(arabic: "لَّهُ", englishTranslation: "to Him", position: 2, verseId: verse4.id),
-            QuranWord(arabic: "كُفُوًا", englishTranslation: "equivalent", position: 3, verseId: verse4.id),
-            QuranWord(arabic: "أَحَدٌ", englishTranslation: "anyone", position: 4, verseId: verse4.id)
+            QuranWord(arabic: "وَلَمْ", englishTranslation: "And not", position: 0),
+            QuranWord(arabic: "يَكُن", englishTranslation: "is", position: 1),
+            QuranWord(arabic: "لَّهُ", englishTranslation: "to Him", position: 2),
+            QuranWord(arabic: "كُفُوًا", englishTranslation: "equivalent", position: 3),
+            QuranWord(arabic: "أَحَدٌ", englishTranslation: "anyone", position: 4)
         ]
         verses.append(verse4)
 

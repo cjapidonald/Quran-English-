@@ -11,20 +11,26 @@ struct QuranVerseView: View {
     let verse: QuranVerse
     @State private var selectedWord: QuranWord?
     @State private var showTranslation = false
+    @State private var preferences = UserPreferences()
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 16) {
-            // Verse header
+        VStack(alignment: .leading, spacing: 20) {
+            // Verse number indicator (minimal, Apple Fitness style)
             HStack {
-                Text("Surah \(verse.surahNumber) - Verse \(verse.verseNumber)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Circle()
+                    .fill(UserPreferences.accentGreen.opacity(0.2))
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Text("\(verse.verseNumber)")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(UserPreferences.accentGreen)
+                    )
                 Spacer()
             }
 
-            // Arabic text with tappable words (right-to-left)
-            FlowLayout(spacing: 8) {
-                ForEach(Array(verse.words.enumerated()), id: \.element.position) { index, word in
+            // Arabic text with tappable words (right-to-left) - NO BOX
+            FlowLayout(spacing: 12) {
+                ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
                     TappableWordView(word: word) { tappedWord in
                         selectedWord = tappedWord
                         showTranslation = true
@@ -32,29 +38,17 @@ struct QuranVerseView: View {
                 }
             }
             .environment(\.layoutDirection, .rightToLeft)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(uiColor: .secondarySystemBackground))
-            )
+            .padding(.vertical, 8)
 
-            // Full English translation
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Translation:")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                Text(verse.fullEnglishTranslation)
-                    .font(.body)
-                    .foregroundColor(.primary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(uiColor: .tertiarySystemBackground))
-            )
+            // Full English translation - NO BOX, seamless
+            Text(verse.fullEnglishTranslation)
+                .font(.system(size: preferences.englishFontSize, weight: .regular, design: .default))
+                .foregroundColor(preferences.textColor.opacity(0.85))
+                .lineSpacing(6)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 8)
         }
+        .padding(.vertical, 16)
         .overlay(
             Group {
                 if showTranslation, let word = selectedWord {

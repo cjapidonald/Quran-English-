@@ -9,20 +9,26 @@ import SwiftUI
 
 @Observable
 class UserPreferences {
-    var arabicTextColor: Color {
-        didSet { arabicTextColor.saveToUserDefaults(key: "arabicTextColor") }
-    }
+    // Dark theme colors (Apple Fitness style)
+    static let darkBackground = Color(red: 0.0, green: 0.0, blue: 0.0) // Pure black like Fitness
+    static let darkText = Color(red: 0.95, green: 0.95, blue: 0.97) // Off-white for readability
+    static let darkArabicText = Color(red: 1.0, green: 1.0, blue: 1.0) // Pure white for Arabic
+    static let accentGreen = Color(red: 0.64, green: 0.93, blue: 0.38) // Apple Fitness green
 
-    var englishTextColor: Color {
-        didSet { englishTextColor.saveToUserDefaults(key: "englishTextColor") }
+    var textColor: Color {
+        didSet { textColor.saveToUserDefaults(key: "textColor") }
     }
 
     var backgroundColor: Color {
         didSet { backgroundColor.saveToUserDefaults(key: "backgroundColor") }
     }
 
-    var fontSize: Double {
-        didSet { UserDefaults.standard.set(fontSize, forKey: "fontSize") }
+    var arabicFontSize: Double {
+        didSet { UserDefaults.standard.set(arabicFontSize, forKey: "arabicFontSize") }
+    }
+
+    var englishFontSize: Double {
+        didSet { UserDefaults.standard.set(englishFontSize, forKey: "englishFontSize") }
     }
 
     var showArabic: Bool {
@@ -33,22 +39,39 @@ class UserPreferences {
         didSet { UserDefaults.standard.set(showEnglish, forKey: "showEnglish") }
     }
 
+    var isDarkMode: Bool {
+        didSet { UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode") }
+    }
+
     init() {
-        // Load saved preferences or use defaults
-        self.arabicTextColor = Color.loadFromUserDefaults(key: "arabicTextColor", defaultColor: .black)
-        self.englishTextColor = Color.loadFromUserDefaults(key: "englishTextColor", defaultColor: Color(.darkGray))
-        self.backgroundColor = Color.loadFromUserDefaults(key: "backgroundColor", defaultColor: .white)
-        self.fontSize = UserDefaults.standard.object(forKey: "fontSize") as? Double ?? 18.0
+        // Load saved preferences or use dark theme defaults (Apple Fitness style)
+        self.isDarkMode = UserDefaults.standard.object(forKey: "isDarkMode") as? Bool ?? true
+        self.textColor = Color.loadFromUserDefaults(key: "textColor", defaultColor: UserPreferences.darkText)
+        self.backgroundColor = Color.loadFromUserDefaults(key: "backgroundColor", defaultColor: UserPreferences.darkBackground)
+        self.arabicFontSize = UserDefaults.standard.object(forKey: "arabicFontSize") as? Double ?? 28.0
+        self.englishFontSize = UserDefaults.standard.object(forKey: "englishFontSize") as? Double ?? 17.0
         self.showArabic = UserDefaults.standard.object(forKey: "showArabic") as? Bool ?? true
         self.showEnglish = UserDefaults.standard.object(forKey: "showEnglish") as? Bool ?? true
     }
 
     func resetToDefaults() {
-        arabicTextColor = .black
-        englishTextColor = Color(.darkGray)
-        backgroundColor = .white
-        fontSize = 18.0
+        isDarkMode = true
+        textColor = UserPreferences.darkText
+        backgroundColor = UserPreferences.darkBackground
+        arabicFontSize = 28.0
+        englishFontSize = 17.0
         showArabic = true
         showEnglish = true
+    }
+
+    func toggleTheme() {
+        isDarkMode.toggle()
+        if isDarkMode {
+            textColor = UserPreferences.darkText
+            backgroundColor = UserPreferences.darkBackground
+        } else {
+            textColor = .black
+            backgroundColor = .white
+        }
     }
 }

@@ -23,30 +23,33 @@ struct ReadingModeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                // Surah Header
-                VStack(spacing: 8) {
+            VStack(spacing: 32) {
+                // Surah Header - Apple Fitness style
+                VStack(spacing: 12) {
                     Text(surah.arabicName)
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.custom("GeezaPro", size: 36))
+                        .foregroundColor(UserPreferences.darkArabicText)
+                        .fontWeight(.bold)
 
                     Text(surah.name)
-                        .font(.title2)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(preferences.textColor)
 
-                    HStack {
+                    HStack(spacing: 8) {
                         Text(surah.revelationType)
-                        Text("•")
+                        Circle()
+                            .fill(UserPreferences.accentGreen)
+                            .frame(width: 4, height: 4)
                         Text("\(surah.numberOfVerses) verses")
                     }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(preferences.textColor.opacity(0.6))
                 }
-                .padding(.top, 20)
+                .padding(.top, 24)
+                .padding(.bottom, 16)
 
-                Divider()
-
-                // Verses
-                ForEach(surah.verses.sorted(by: { $0.verseNumber < $1.verseNumber })) { verse in
+                // Verses - NO BOXES, clean flow
+                ForEach((surah.verses ?? []).sorted(by: { $0.verseNumber < $1.verseNumber })) { verse in
                     VerseCardView(
                         verse: verse,
                         preferences: preferences,
@@ -57,12 +60,20 @@ struct ReadingModeView: View {
                             showActionSheet = true
                         }
                     )
-                    .padding(.horizontal)
+                    .padding(.horizontal, 20)
+
+                    // Subtle divider between verses
+                    if verse.verseNumber < surah.numberOfVerses {
+                        Divider()
+                            .background(preferences.textColor.opacity(0.1))
+                            .padding(.horizontal, 40)
+                            .padding(.vertical, 8)
+                    }
                 }
             }
-            .padding(.vertical)
+            .padding(.vertical, 8)
         }
-        .background(preferences.backgroundColor)
+        .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
         .navigationTitle(surah.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -180,59 +191,49 @@ struct VerseCardView: View {
     @State private var showTranslation = false
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 16) {
-            // Verse header with favorite indicator
-            HStack {
-                Text("Verse \(verse.verseNumber)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 20) {
+            // Verse number indicator (minimal, Apple Fitness style)
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(UserPreferences.accentGreen.opacity(0.2))
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Text("\(verse.verseNumber)")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(UserPreferences.accentGreen)
+                    )
 
                 if isFavorited {
                     Image(systemName: "heart.fill")
-                        .font(.caption)
-                        .foregroundColor(.red)
+                        .font(.system(size: 14))
+                        .foregroundColor(UserPreferences.accentGreen)
                 }
 
                 Spacer()
             }
 
-            // Arabic text with tappable words
+            // Arabic text with tappable words - NO BOX
             if preferences.showArabic {
-                FlowLayout(spacing: 8) {
-                    ForEach(Array(verse.words.enumerated()), id: \.element.position) { index, word in
+                FlowLayout(spacing: 12) {
+                    ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
                         TappableWordView(word: word) { tappedWord in
                             selectedWord = tappedWord
                             showTranslation = true
                         }
-                        .foregroundColor(preferences.arabicTextColor)
-                        .font(.system(size: preferences.fontSize))
                     }
                 }
                 .environment(\.layoutDirection, .rightToLeft)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(uiColor: .secondarySystemBackground))
-                )
+                .padding(.vertical, 8)
             }
 
-            // Full English translation
+            // Full English translation - NO BOX, seamless
             if preferences.showEnglish {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Translation:")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    Text(verse.fullEnglishTranslation)
-                        .font(.system(size: preferences.fontSize * 0.85))
-                        .foregroundColor(preferences.englishTextColor)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(uiColor: .tertiarySystemBackground))
-                )
+                Text(verse.fullEnglishTranslation)
+                    .font(.system(size: preferences.englishFontSize, weight: .regular))
+                    .foregroundColor(preferences.textColor.opacity(0.85))
+                    .lineSpacing(6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 4)
             }
         }
         .contentShape(Rectangle())

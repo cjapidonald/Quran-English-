@@ -10,12 +10,12 @@ import SwiftData
 
 @Model
 final class FavoriteVerse {
-    var id: UUID
-    var surahNumber: Int
-    var verseNumber: Int
-    var arabicText: String
-    var englishTranslation: String
-    var addedAt: Date
+    var id: UUID = UUID()
+    var surahNumber: Int = 0
+    var verseNumber: Int = 0
+    var arabicText: String = ""
+    var englishTranslation: String = ""
+    var addedAt: Date = Date()
 
     init(surahNumber: Int, verseNumber: Int, arabicText: String, englishTranslation: String) {
         self.id = UUID()

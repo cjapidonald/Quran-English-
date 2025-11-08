@@ -10,13 +10,13 @@ import SwiftData
 
 @Model
 final class NoteCategory {
-    var id: UUID
-    var name: String
-    var colorHex: String
-    var createdAt: Date
+    var id: UUID = UUID()
+    var name: String = ""
+    var colorHex: String = ""
+    var createdAt: Date = Date()
 
-    @Relationship(deleteRule: .nullify, inverse: \QuranNote.category)
-    var notes: [QuranNote] = []
+    @Relationship(deleteRule: .nullify)
+    var notes: [QuranNote]? = []
 
     init(name: String, colorHex: String) {
         self.id = UUID()

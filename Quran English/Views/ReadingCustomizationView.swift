@@ -14,82 +14,138 @@ struct ReadingCustomizationView: View {
     var body: some View {
         NavigationView {
             Form {
+                // Theme
+                Section {
+                    Toggle(isOn: $preferences.isDarkMode) {
+                        HStack {
+                            Image(systemName: preferences.isDarkMode ? "moon.fill" : "sun.max.fill")
+                                .foregroundColor(preferences.isDarkMode ? UserPreferences.accentGreen : .orange)
+                            Text("Dark Mode")
+                        }
+                    }
+                    .onChange(of: preferences.isDarkMode) { oldValue, newValue in
+                        preferences.toggleTheme()
+                    }
+                } header: {
+                    Text("Appearance")
+                } footer: {
+                    Text("Apple Fitness-inspired dark theme with pure black background")
+                }
+
                 // Display Options
                 Section("Display Options") {
                     Toggle("Show Arabic Text", isOn: $preferences.showArabic)
                     Toggle("Show English Translation", isOn: $preferences.showEnglish)
                 }
 
-                // Font Size
+                // Arabic Font Size
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("Font Size")
+                            Text("Arabic Font Size")
                             Spacer()
-                            Text("\(Int(preferences.fontSize))pt")
+                            Text("\(Int(preferences.arabicFontSize))pt")
                                 .foregroundColor(.secondary)
                         }
 
-                        Slider(value: $preferences.fontSize, in: 12...32, step: 1)
+                        Slider(value: $preferences.arabicFontSize, in: 18...48, step: 1)
 
                         // Preview text
-                        VStack(spacing: 8) {
-                            if preferences.showArabic {
-                                Text("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ")
-                                    .font(.system(size: preferences.fontSize))
-                                    .foregroundColor(preferences.arabicTextColor)
-                            }
-
-                            if preferences.showEnglish {
-                                Text("In the name of Allah, the Most Gracious, the Most Merciful")
-                                    .font(.system(size: preferences.fontSize * 0.85))
-                                    .foregroundColor(preferences.englishTextColor)
-                            }
+                        if preferences.showArabic {
+                            Text("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ")
+                                .font(.custom("GeezaPro", size: preferences.arabicFontSize))
+                                .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(preferences.backgroundColor)
+                                .cornerRadius(8)
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(preferences.backgroundColor)
-                        .cornerRadius(8)
                     }
                 } header: {
-                    Text("Font Size")
+                    Text("Arabic Typography")
+                }
+
+                // English Font Size
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("English Font Size")
+                            Spacer()
+                            Text("\(Int(preferences.englishFontSize))pt")
+                                .foregroundColor(.secondary)
+                        }
+
+                        Slider(value: $preferences.englishFontSize, in: 12...28, step: 1)
+
+                        // Preview text
+                        if preferences.showEnglish {
+                            Text("In the name of Allah, the Most Gracious, the Most Merciful")
+                                .font(.system(size: preferences.englishFontSize, weight: .regular))
+                                .foregroundColor(preferences.textColor)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                                .background(preferences.backgroundColor)
+                                .cornerRadius(8)
+                        }
+                    }
+                } header: {
+                    Text("English Typography")
                 }
 
                 // Colors
-                Section("Colors") {
-                    ColorPicker("Arabic Text Color", selection: $preferences.arabicTextColor)
-                    ColorPicker("English Text Color", selection: $preferences.englishTextColor)
+                Section {
+                    ColorPicker("Text Color", selection: $preferences.textColor)
                     ColorPicker("Background Color", selection: $preferences.backgroundColor)
+                } header: {
+                    Text("Colors")
+                } footer: {
+                    Text("Customize text and background colors. Arabic text automatically adjusts for contrast.")
                 }
 
-                // Sample Preview
+                // Live Preview
                 Section {
                     VStack(spacing: 12) {
-                        Text("Preview")
+                        Text("Full Preview")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        VStack(spacing: 8) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            // Verse number indicator
+                            HStack {
+                                Circle()
+                                    .fill(UserPreferences.accentGreen.opacity(0.2))
+                                    .frame(width: 32, height: 32)
+                                    .overlay(
+                                        Text("1")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(UserPreferences.accentGreen)
+                                    )
+                                Spacer()
+                            }
+
                             if preferences.showArabic {
                                 Text("الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ")
-                                    .font(.system(size: preferences.fontSize))
-                                    .foregroundColor(preferences.arabicTextColor)
+                                    .font(.custom("GeezaPro", size: preferences.arabicFontSize))
+                                    .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
                             }
 
                             if preferences.showEnglish {
                                 Text("All praise is for Allah—Lord of all worlds")
-                                    .font(.system(size: preferences.fontSize * 0.85))
-                                    .foregroundColor(preferences.englishTextColor)
+                                    .font(.system(size: preferences.englishFontSize, weight: .regular))
+                                    .foregroundColor(preferences.textColor.opacity(0.85))
+                                    .lineSpacing(6)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(preferences.backgroundColor)
-                        .cornerRadius(8)
+                        .cornerRadius(12)
                     }
                 } header: {
-                    Text("Live Preview")
+                    Text("Preview")
                 }
 
                 // Reset Button
@@ -105,7 +161,7 @@ struct ReadingCustomizationView: View {
                     }
                 }
             }
-            .navigationTitle("Customization")
+            .navigationTitle("Reading Customization")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

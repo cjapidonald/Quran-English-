@@ -357,7 +357,7 @@ struct CategoryRowView: View {
                 Text(category.name)
                     .font(.headline)
 
-                Text("\(category.notes.count) notes")
+                Text("\(category.notes?.count ?? 0) notes")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
