@@ -34,7 +34,7 @@ struct ReadingCustomizationView: View {
 
                         // Preview text
                         if preferences.showArabic {
-                            Text("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ")
+                            Text("Sample text for Arabic layout preview")
                                 .font(.custom("Lateef", size: preferences.arabicFontSize))
                                 .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
                                 .frame(maxWidth: .infinity)
@@ -61,7 +61,7 @@ struct ReadingCustomizationView: View {
 
                         // Preview text
                         if preferences.showEnglish {
-                            Text("In the name of Allah, the Most Gracious, the Most Merciful")
+                            Text("Sample translation text for preview purposes only.")
                                 .font(.system(size: preferences.englishFontSize, weight: .regular))
                                 .foregroundColor(preferences.textColor)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,14 +107,14 @@ struct ReadingCustomizationView: View {
                             }
 
                             if preferences.showArabic {
-                                Text("الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ")
+                                Text("Preview text for right-to-left layout")
                                     .font(.custom("Lateef", size: preferences.arabicFontSize))
                                     .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                             }
 
                             if preferences.showEnglish {
-                                Text("All praise is for Allah—Lord of all worlds")
+                                Text("Example translation goes here to demonstrate layout and spacing.")
                                     .font(.system(size: preferences.englishFontSize, weight: .regular))
                                     .foregroundColor(preferences.textColor.opacity(0.85))
                                     .lineSpacing(6)

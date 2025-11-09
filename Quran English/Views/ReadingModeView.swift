@@ -103,7 +103,7 @@ struct ReadingModeView: View {
                     .padding(.horizontal, 24)
                 } else {
                     // Traditional verse-by-verse for dual language
-                    VStack(alignment: .leading, spacing: 0) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
                         ForEach((surah.verses ?? []).sorted(by: { $0.verseNumber < $1.verseNumber })) { verse in
                             BookStyleVerseView(
                                 verse: verse,
@@ -141,7 +141,8 @@ struct ReadingModeView: View {
         .navigationTitle(surah.name)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            // Calculate progress based on viewed verses
+            // Load existing progress first, then update based on viewed verses
+            loadProgress()
             updateScrollProgress()
         }
         .onDisappear {
@@ -502,7 +503,7 @@ struct FluidReadingView: View {
     private var arabicFluidText: some View {
         FlowLayout(spacing: 6) {
             ForEach(verses) { verse in
-                ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
+                ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
                     TappableWordView(
                         word: word,
                         verse: verse,
@@ -744,7 +745,7 @@ struct BookStyleVerseView: View {
                 // Arabic text - continuous flow
                 if preferences.showArabic {
                     FlowLayout(spacing: 6) {
-                        ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
+                        ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
                             TappableWordView(
                                 word: word,
                                 verse: verse,
@@ -828,7 +829,7 @@ struct VerseCardView: View {
             // Arabic text with tappable words - NO BOX
             if preferences.showArabic {
                 FlowLayout(spacing: 6) {
-                    ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
+                    ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
                         TappableWordView(word: word) { tappedWord in
                             selectedWord = tappedWord
                             showTranslation = true

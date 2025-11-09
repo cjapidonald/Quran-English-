@@ -169,13 +169,13 @@ struct ChatGPTView: View {
     private func generateSimulatedResponse(for question: String) -> String {
         // This is a placeholder - replace with actual OpenAI API integration
         let responses = [
-            "This verse emphasizes the importance of seeking guidance from Allah. It reminds us to always stay on the straight path and avoid going astray.",
-            "This beautiful verse teaches us about Allah's mercy and compassion. The repetition of these attributes shows their significance in understanding Allah's nature.",
-            "This verse reminds us of our purpose - to worship Allah alone and seek His help in all matters. It's a powerful reminder of our dependence on our Creator.",
-            "The context of this verse is important. It was revealed during a time when the early Muslims needed spiritual guidance and strength."
+            "This placeholder response demonstrates how insights will appear once you connect a new knowledge source.",
+            "Consider what themes or keywords stand out in this passage and how they relate to the project you have in mind.",
+            "Try focusing on the structure of the text. What patterns or repeated ideas might inform your next revision?",
+            "Add your own AI integration to replace this sample answer with domain-specific guidance."
         ]
 
-        return responses.randomElement() ?? "Thank you for your question. I encourage you to reflect deeply on this verse and consult scholarly tafsir (interpretation) for a comprehensive understanding."
+        return responses.randomElement() ?? "Thanks for the question. Customize this view to hook into the content or service you plan to use."
     }
 }
 

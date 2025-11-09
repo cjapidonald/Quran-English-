@@ -19,15 +19,15 @@ struct ContentView: View {
                 VStack(spacing: 20) {
                     // Header
                     VStack(spacing: 8) {
-                        Text("القرآن الكريم")
+                        Text("Content Preview")
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.primary)
 
-                        Text("The Noble Quran")
+                        Text("Load your own collection to explore it here.")
                             .font(.title2)
                             .foregroundColor(.secondary)
 
-                        Text("Tap any Arabic word to see its English translation")
+                        Text("Tap any word to view its translation once data is available.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -50,7 +50,7 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
 
                             Button(action: loadSampleData) {
-                                Label("Load Sample Data (Al-Fatiha)", systemImage: "arrow.down.circle.fill")
+                                Label("Load Sample Data", systemImage: "arrow.down.circle.fill")
                                     .padding()
                                     .background(Color.blue)
                                     .foregroundColor(.white)
@@ -93,7 +93,7 @@ struct ContentView: View {
             modelContext.delete(verse)
         }
 
-        // Load sample data (Al-Fatiha)
+        // Load placeholder sample data
         let sampleVerses = SampleQuranData.createSampleVerses()
         for verse in sampleVerses {
             modelContext.insert(verse)

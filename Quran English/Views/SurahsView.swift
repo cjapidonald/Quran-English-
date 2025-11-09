@@ -82,28 +82,28 @@ struct SurahsView: View {
             Group {
                 if surahs.isEmpty {
                     VStack(spacing: 20) {
-                        Image(systemName: "book.closed")
-                            .font(.system(size: 60))
-                            .foregroundColor(preferences.textColor.opacity(0.5))
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .padding()
 
-                        Text("No Surahs Available")
+                        Text("Loading Content...")
                             .font(.headline)
                             .foregroundColor(preferences.textColor.opacity(0.7))
 
-                        Text("Load sample data to get started")
+                        Text("No bundled text is available. Import your own data when ready.")
                             .font(.caption)
                             .foregroundColor(preferences.textColor.opacity(0.6))
-
-                        Button(action: { showLoadDataAlert = true }) {
-                            Label("Load Sample Data", systemImage: "arrow.down.circle.fill")
-                                .padding()
-                                .background(UserPreferences.accentGreen)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                        }
                     }
                     .frame(maxHeight: .infinity)
                     .background(preferences.backgroundColor.edgesIgnoringSafeArea(.all))
+                    .onAppear {
+                        // Auto-load data on first launch
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if surahs.isEmpty {
+                                loadSampleData()
+                            }
+                        }
+                    }
                 } else {
                     List {
                         ForEach(filteredSurahs.sorted(by: { $0.surahNumber < $1.surahNumber })) { surah in
@@ -111,12 +111,10 @@ struct SurahsView: View {
                                 VStack(spacing: 8) {
                                     SurahRowView(surah: surah, preferences: preferences)
 
-                                    // Progress bar - always show
+                                    // Progress bar - always show for all surahs
                                     let progressValue = getProgress(for: surah.surahNumber)?.progressPercentage ?? 0.0
-                                    if progressValue > 0 {
-                                        SurahProgressBar(progress: progressValue)
-                                            .padding(.top, 4)
-                                    }
+                                    SurahProgressBar(progress: progressValue)
+                                        .padding(.top, 4)
                                 }
                             }
                             .listRowBackground(preferences.backgroundColor)
@@ -146,13 +144,13 @@ struct SurahsView: View {
                     }
                 }
             }
-            .alert("Load Quran Data", isPresented: $showLoadDataAlert) {
+            .alert("Reload Content", isPresented: $showLoadDataAlert) {
                 Button("Cancel", role: .cancel) {}
-                Button("Load") {
+                Button("Reload") {
                     loadSampleData()
                 }
             } message: {
-                Text("This will load all 114 surahs with metadata. Complete word-by-word translations are included for Al-Fatiha, Al-Ikhlas, Al-Falaq, and An-Nas. Any existing data will be replaced.")
+                Text("This clears the current library and reloads whatever placeholder data source is bundled with the app.")
             }
             .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
         }
@@ -164,7 +162,7 @@ struct SurahsView: View {
             modelContext.delete(surah)
         }
 
-        // Load comprehensive Quran data (all 114 surahs)
+        // Load bundled content (currently empty until new data is provided)
         let allSurahs = ComprehensiveQuranData.createAllSurahs()
         for surah in allSurahs {
             modelContext.insert(surah)
@@ -246,17 +244,19 @@ struct SurahProgressBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Reading Progress")
+                Text(progress > 0 ? "Reading Progress" : "Not Started")
                     .font(.caption2)
                     .fontWeight(.medium)
                     .foregroundColor(preferences.textColor.opacity(0.5))
 
                 Spacer()
 
-                Text("\(Int(progress))%")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(progressColor)
+                if progress > 0 {
+                    Text("\(Int(progress))%")
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(progressColor)
+                }
             }
 
             // Progress bar with conditional gradient

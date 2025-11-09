@@ -30,7 +30,7 @@ struct QuranVerseView: View {
 
             // Arabic text with tappable words (right-to-left) - NO BOX
             FlowLayout(spacing: 6) {
-                ForEach(Array((verse.words ?? []).enumerated()), id: \.element.position) { index, word in
+                ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
                     TappableWordView(word: word) { tappedWord in
                         selectedWord = tappedWord
                         showTranslation = true
