@@ -501,25 +501,23 @@ struct FluidReadingView: View {
     // Fluid Arabic text with inline verse numbers
     @ViewBuilder
     private var arabicFluidText: some View {
-        FlowLayout(spacing: 6) {
+        VStack(alignment: .trailing, spacing: 12) {
             ForEach(verses) { verse in
-                ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
-                    TappableWordView(
-                        word: word,
-                        verse: verse,
-                        onTap: { tappedWord in
-                            selectedWord = tappedWord
-                            showTranslation = true
-                        },
-                        onLongPress: { longPressedVerse in
-                            onVerseTap(longPressedVerse)
-                        }
-                    )
-                }
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    // Inline verse number with icons
+                    inlineArabicVerseIndicator(verse)
 
-                // Inline verse number with icons (similar to English brackets)
-                inlineArabicVerseIndicator(verse)
-                    .padding(.horizontal, 4)
+                    // Arabic text
+                    Text(verse.fullArabicText)
+                        .font(.custom("Lateef", size: preferences.arabicFontSize))
+                        .foregroundColor(preferences.arabicTextColor)
+                        .lineSpacing(10)
+                        .multilineTextAlignment(.trailing)
+                        .onLongPressGesture {
+                            onVerseTap(verse)
+                        }
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .environment(\.layoutDirection, .rightToLeft)
@@ -742,24 +740,18 @@ struct BookStyleVerseView: View {
 
             // Verse content - flowing like book text
             VStack(alignment: .leading, spacing: 16) {
-                // Arabic text - continuous flow
+                // Arabic text - display full text with RTL
                 if preferences.showArabic {
-                    FlowLayout(spacing: 6) {
-                        ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
-                            TappableWordView(
-                                word: word,
-                                verse: verse,
-                                onTap: { tappedWord in
-                                    selectedWord = tappedWord
-                                    showTranslation = true
-                                },
-                                onLongPress: { longPressedVerse in
-                                    onLongPress()
-                                }
-                            )
+                    Text(verse.fullArabicText)
+                        .font(.custom("Lateef", size: preferences.arabicFontSize))
+                        .foregroundColor(preferences.arabicTextColor)
+                        .lineSpacing(12)
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .environment(\.layoutDirection, .rightToLeft)
+                        .onLongPressGesture {
+                            onLongPress()
                         }
-                    }
-                    .environment(\.layoutDirection, .rightToLeft)
                 }
 
                 // English translation - book paragraph style
@@ -826,18 +818,19 @@ struct VerseCardView: View {
                 Spacer()
             }
 
-            // Arabic text with tappable words - NO BOX
+            // Arabic text - display full text with RTL
             if preferences.showArabic {
-                FlowLayout(spacing: 6) {
-                    ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
-                        TappableWordView(word: word) { tappedWord in
-                            selectedWord = tappedWord
-                            showTranslation = true
-                        }
+                Text(verse.fullArabicText)
+                    .font(.custom("Lateef", size: preferences.arabicFontSize))
+                    .foregroundColor(preferences.arabicTextColor)
+                    .lineSpacing(12)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .environment(\.layoutDirection, .rightToLeft)
+                    .padding(.vertical, 8)
+                    .onLongPressGesture {
+                        onLongPress()
                     }
-                }
-                .environment(\.layoutDirection, .rightToLeft)
-                .padding(.vertical, 8)
             }
 
             // Full English translation - NO BOX, seamless

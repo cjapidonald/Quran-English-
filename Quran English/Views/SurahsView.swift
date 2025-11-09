@@ -13,7 +13,6 @@ struct SurahsView: View {
     @Query private var surahs: [Surah]
     @Query private var readingProgress: [ReadingProgress]
     @State private var preferences = UserPreferences.shared
-    @State private var showLoadDataAlert = false
     @State private var searchText = ""
     @State private var showSearch = false
 
@@ -86,11 +85,11 @@ struct SurahsView: View {
                             .scaleEffect(1.5)
                             .padding()
 
-                        Text("Loading Content...")
+                        Text("Loading Quran...")
                             .font(.headline)
                             .foregroundColor(preferences.textColor.opacity(0.7))
 
-                        Text("No bundled text is available. Import your own data when ready.")
+                        Text("Loading all 114 Surahs with English translation")
                             .font(.caption)
                             .foregroundColor(preferences.textColor.opacity(0.6))
                     }
@@ -99,9 +98,8 @@ struct SurahsView: View {
                     .onAppear {
                         // Auto-load data on first launch
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            if surahs.isEmpty {
-                                loadSampleData()
-                            }
+                            // Always reload to get fresh data with Arabic
+                            loadSampleData()
                         }
                     }
                 } else {
@@ -112,9 +110,13 @@ struct SurahsView: View {
                                     SurahRowView(surah: surah, preferences: preferences)
 
                                     // Progress bar - always show for all surahs
-                                    let progressValue = getProgress(for: surah.surahNumber)?.progressPercentage ?? 0.0
-                                    SurahProgressBar(progress: progressValue)
-                                        .padding(.top, 4)
+                                    if let progress = getProgress(for: surah.surahNumber) {
+                                        SurahProgressBar(progress: progress.progressPercentage)
+                                            .padding(.top, 4)
+                                    } else {
+                                        SurahProgressBar(progress: 0.0)
+                                            .padding(.top, 4)
+                                    }
                                 }
                             }
                             .listRowBackground(preferences.backgroundColor)
@@ -128,47 +130,57 @@ struct SurahsView: View {
             .navigationTitle("Quran")
             .searchable(text: $searchText, isPresented: $showSearch, prompt: "Search in Arabic or English...")
             .toolbar {
-                if !surahs.isEmpty {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        HStack(spacing: 16) {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: 16) {
+                        if !surahs.isEmpty {
                             Button(action: { showSearch.toggle() }) {
                                 Image(systemName: "magnifyingglass")
                                     .foregroundColor(UserPreferences.accentGreen)
                             }
+                        }
 
-                            Button(action: { showLoadDataAlert = true }) {
-                                Image(systemName: "arrow.clockwise")
-                                    .foregroundColor(UserPreferences.accentGreen)
-                            }
+                        Button(action: {
+                            NSLog("🔄 Manual reload triggered - START")
+                            loadSampleData()
+                            NSLog("🔄 Manual reload triggered - COMPLETE")
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(UserPreferences.accentGreen)
                         }
                     }
                 }
-            }
-            .alert("Reload Content", isPresented: $showLoadDataAlert) {
-                Button("Cancel", role: .cancel) {}
-                Button("Reload") {
-                    loadSampleData()
-                }
-            } message: {
-                Text("This clears the current library and reloads whatever placeholder data source is bundled with the app.")
             }
             .preferredColorScheme(preferences.isDarkMode ? .dark : .light)
         }
     }
 
     private func loadSampleData() {
+        NSLog("🔄 loadSampleData() started")
+
         // Clear existing data
+        NSLog("🗑️ Clearing \(surahs.count) existing surahs")
         for surah in surahs {
             modelContext.delete(surah)
         }
 
-        // Load bundled content (currently empty until new data is provided)
+        // Clear all reading progress
+        NSLog("🗑️ Clearing \(readingProgress.count) progress records")
+        for progress in readingProgress {
+            modelContext.delete(progress)
+        }
+
+        // Load bundled content
+        NSLog("📚 Loading bundled content...")
         let allSurahs = ComprehensiveQuranData.createAllSurahs()
+        NSLog("📥 Inserting \(allSurahs.count) surahs into database")
+
         for surah in allSurahs {
             modelContext.insert(surah)
         }
 
+        NSLog("💾 Saving to database...")
         try? modelContext.save()
+        NSLog("✅ loadSampleData() completed")
     }
 
     private func getProgress(for surahNumber: Int) -> ReadingProgress? {
@@ -195,15 +207,19 @@ struct SurahRowView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(surah.name)
-                        .font(.headline)
-                        .foregroundColor(preferences.textColor)
+                    if preferences.showEnglish {
+                        Text(surah.name)
+                            .font(.headline)
+                            .foregroundColor(preferences.textColor)
+                    }
 
                     Spacer()
 
-                    Text(surah.arabicName)
-                        .font(.custom("Lateef", size: 18))
-                        .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
+                    if preferences.showArabic {
+                        Text(surah.arabicName)
+                            .font(.custom("Lateef", size: 18))
+                            .foregroundColor(preferences.isDarkMode ? UserPreferences.darkArabicText : .black)
+                    }
                 }
 
                 HStack {
@@ -241,18 +257,23 @@ struct SurahProgressBar: View {
         }
     }
 
+    // Ensure progress is between 0 and 100
+    private var safeProgress: Double {
+        return min(max(progress, 0.0), 100.0)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(progress > 0 ? "Reading Progress" : "Not Started")
+                Text(safeProgress > 0 ? "Reading Progress" : "Not Started")
                     .font(.caption2)
                     .fontWeight(.medium)
                     .foregroundColor(preferences.textColor.opacity(0.5))
 
                 Spacer()
 
-                if progress > 0 {
-                    Text("\(Int(progress))%")
+                if safeProgress > 0 {
+                    Text("\(Int(safeProgress))%")
                         .font(.caption2)
                         .fontWeight(.semibold)
                         .foregroundColor(progressColor)
@@ -260,27 +281,28 @@ struct SurahProgressBar: View {
             }
 
             // Progress bar with conditional gradient
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background track
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(preferences.textColor.opacity(0.1))
-                        .frame(height: 6)
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(preferences.textColor.opacity(0.1))
+                    .frame(height: 6)
 
-                    // Progress fill with gradient
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    progressColor,
-                                    progressColor.opacity(0.7)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
+                // Progress fill with gradient
+                if safeProgress > 0 {
+                    GeometryReader { geometry in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        progressColor,
+                                        progressColor.opacity(0.7)
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
                             )
-                        )
-                        .frame(width: geometry.size.width * (progress / 100), height: 6)
-                        .shadow(color: progressColor.opacity(0.5), radius: 4, x: 0, y: 0)
+                            .frame(width: max(geometry.size.width * (safeProgress / 100), 0), height: 6)
+                    }
                 }
             }
             .frame(height: 6)

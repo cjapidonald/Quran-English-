@@ -41,21 +41,13 @@ struct ContentView: View {
                     // Display verses
                     if verses.isEmpty {
                         VStack(spacing: 16) {
-                            Image(systemName: "book.closed")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .padding()
 
-                            Text("No verses loaded")
+                            Text("Loading Quran...")
                                 .font(.headline)
                                 .foregroundColor(.secondary)
-
-                            Button(action: loadSampleData) {
-                                Label("Load Sample Data", systemImage: "arrow.down.circle.fill")
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
                         }
                         .padding(.top, 40)
                     } else {
@@ -71,13 +63,6 @@ struct ContentView: View {
             }
             .navigationTitle("Quran English")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: loadSampleData) {
-                        Label("Reload", systemImage: "arrow.clockwise")
-                    }
-                }
-            }
         }
         .onAppear {
             if !isDataLoaded && verses.isEmpty {
@@ -88,18 +73,8 @@ struct ContentView: View {
     }
 
     private func loadSampleData() {
-        // Clear existing verses
-        for verse in verses {
-            modelContext.delete(verse)
-        }
-
-        // Load placeholder sample data
-        let sampleVerses = SampleQuranData.createSampleVerses()
-        for verse in sampleVerses {
-            modelContext.insert(verse)
-        }
-
-        try? modelContext.save()
+        // Don't load sample data in ContentView - let SurahsView handle it
+        // This view is just for testing individual verses
     }
 }
 

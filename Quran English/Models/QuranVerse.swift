@@ -18,21 +18,19 @@ final class QuranVerse {
     var words: [QuranWord]? = []
 
     var fullEnglishTranslation: String = ""
+    var fullArabicText: String = "" // Store Arabic text directly
 
     // Inverse relationship to Surah
     @Relationship(deleteRule: .nullify, inverse: \Surah.verses)
     var surah: Surah?
 
-    init(surahNumber: Int, verseNumber: Int, words: [QuranWord]? = [], fullEnglishTranslation: String, surah: Surah? = nil) {
+    init(surahNumber: Int, verseNumber: Int, words: [QuranWord]? = [], fullEnglishTranslation: String, fullArabicText: String = "", surah: Surah? = nil) {
         self.id = UUID()
         self.surahNumber = surahNumber
         self.verseNumber = verseNumber
         self.words = words
         self.fullEnglishTranslation = fullEnglishTranslation
+        self.fullArabicText = fullArabicText
         self.surah = surah
-    }
-
-    var fullArabicText: String {
-        words?.map { $0.arabic }.joined(separator: " ") ?? ""
     }
 }

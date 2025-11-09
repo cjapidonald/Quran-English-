@@ -28,17 +28,15 @@ struct QuranVerseView: View {
                 Spacer()
             }
 
-            // Arabic text with tappable words (right-to-left) - NO BOX
-            FlowLayout(spacing: 6) {
-                ForEach(Array((verse.words ?? []).reversed().enumerated()), id: \.element.position) { index, word in
-                    TappableWordView(word: word) { tappedWord in
-                        selectedWord = tappedWord
-                        showTranslation = true
-                    }
-                }
-            }
-            .environment(\.layoutDirection, .rightToLeft)
-            .padding(.vertical, 8)
+            // Arabic text - display full text with RTL
+            Text(verse.fullArabicText)
+                .font(.custom("Lateef", size: preferences.arabicFontSize))
+                .foregroundColor(preferences.arabicTextColor)
+                .lineSpacing(12)
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .environment(\.layoutDirection, .rightToLeft)
+                .padding(.vertical, 8)
 
             // Full English translation - NO BOX, seamless
             Text(verse.fullEnglishTranslation)

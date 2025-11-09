@@ -2,42 +2,29 @@
 //  SampleQuranData.swift
 //  Quran English
 //
-//  Lightweight placeholder data that keeps the UI functional while
-//  the original Quran content is removed.
+//  Sample data loader that provides verses from the first Surah (Al-Fātihah)
+//  for quick testing. Uses the complete Quran data source.
 //
 
 import Foundation
 
 struct SampleQuranData {
     static func createSampleVerses() -> [QuranVerse] {
-        var verses: [QuranVerse] = []
+        // Load all Surahs from the comprehensive data
+        let allSurahs = ComprehensiveQuranData.createAllSurahs()
 
-        let verse1Words = [
-            QuranWord(arabic: "Sample", englishTranslation: "Sample", position: 0),
-            QuranWord(arabic: "text", englishTranslation: "text", position: 1),
-            QuranWord(arabic: "only", englishTranslation: "only", position: 2)
-        ]
-        let verse1 = QuranVerse(
-            surahNumber: 1,
-            verseNumber: 1,
-            words: verse1Words,
-            fullEnglishTranslation: "Placeholder translation used for testing the UI."
-        )
-        verses.append(verse1)
+        // Return verses from the first Surah (Al-Fātihah) as a sample
+        if let firstSurah = allSurahs.first, let verses = firstSurah.verses {
+            return verses
+        }
 
-        let verse2Words = [
-            QuranWord(arabic: "More", englishTranslation: "More", position: 0),
-            QuranWord(arabic: "sample", englishTranslation: "sample", position: 1),
-            QuranWord(arabic: "words", englishTranslation: "words", position: 2)
-        ]
-        let verse2 = QuranVerse(
-            surahNumber: 1,
-            verseNumber: 2,
-            words: verse2Words,
-            fullEnglishTranslation: "Add your own content source when it is ready."
-        )
-        verses.append(verse2)
+        // Fallback to empty array if data loading fails
+        print("⚠️ Could not load sample verses")
+        return []
+    }
 
-        return verses
+    /// Returns all Surahs for navigation views
+    static func createAllSurahs() -> [Surah] {
+        return ComprehensiveQuranData.createAllSurahs()
     }
 }
